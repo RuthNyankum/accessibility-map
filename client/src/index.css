@@ -2,124 +2,96 @@
 
 @import "tailwindcss";
 
+/*
+ * Tailwind v4: enable class-based dark mode.
+ * This tells Tailwind that dark: variants activate when
+ * the "dark" class is present on <html> (set by ThemeContext).
+ */
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
-  /* ── FONT ─────────────────────────────────────────────────
-     Atkinson Hyperlegible is designed specifically for low
-     vision users — each character is shaped to be as
-     distinct as possible (l vs 1 vs I, 0 vs O, etc.)
-  ─────────────────────────────────────────────────────────── */
   --font-body: "Atkinson Hyperlegible", Arial, sans-serif;
 
-  /* ── PRIMARY — Ghana green ────────────────────────────────
-     All three shades pass WCAG AA contrast on white (7.0:1)
-  ─────────────────────────────────────────────────────────── */
-  --color-primary: #006400; /* buttons, links, logo, active nav */
-  --color-primary-hover: #004d00; /* hover state on primary buttons */
-  --color-primary-light: #f0fff4; /* hero section background tint */
-  --color-primary-fg: #ffffff; /* text ON primary green buttons */
+  --color-primary: #006400;
+  --color-primary-hover: #004d00;
+  --color-primary-light: #f0fff4;
+  --color-primary-fg: #ffffff;
+  --color-primary-dark: #4ade80;
+  --color-primary-dark-fg: #052e16;
 
-  /* ── PRIMARY — dark mode ──────────────────────────────────
-     Bright mint — 9.8:1 on dark background #0F172A 
-  ─────────────────────────────────────────────────────────── */
-  --color-primary-dark: #4ade80; /* primary green in dark mode */
-  --color-primary-dark-fg: #052e16; /* text ON dark-mode primary */
+  --color-bg: #ffffff;
+  --color-surface: #f5f5f4;
+  --color-surface-2: #eeeeec;
+  --color-border: #d4d0c8;
+  --color-border-strong: #a8a49a;
 
-  /* ── LIGHT PALETTE ────────────────────────────────────────
-     All text/bg combinations meet WCAG AA (4.5:1 minimum)
-  ─────────────────────────────────────────────────────────── */
-  --color-bg: #ffffff; /* page background */
-  --color-surface: #f5f5f4; /* nav, hero, footer, cards */
-  --color-surface-2: #eeeeec; /* toolbar, hover states */
-  --color-border: #d4d0c8; /* all borders */
-  --color-border-strong: #a8a49a; /* FAB panel border, emphasis */
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-focus: #005fcc;
 
-  --color-text-primary: #111827; /* main body text — 16.75:1 on white  */
-  --color-text-secondary: #374151; /* subtitles, labels — 10.7:1 on white  */
-  --color-text-muted: #6b7280; /* hints, placeholders — 4.7:1 on white */
+  --color-bg-dark: #0f172a;
+  --color-surface-dark: #1e293b;
+  --color-border-dark: #334155;
+  --color-text-primary-dark: #f9fafb;
+  --color-text-secondary-dark: #cbd5e1;
+  --color-text-muted-dark: #94a3b8;
+  --color-focus-dark: #60a5fa;
 
-  --color-focus: #005fcc; /* keyboard focus ring — blue, distinct from green */
+  --color-danger: #b91c1c;
+  --color-danger-bg: #fef2f2;
+  --color-danger-border: #fecaca;
+  --color-danger-dark: #fca5a5;
+  --color-danger-bg-dark: #450a0a;
 
-  /* ── DARK PALETTE ─────────────────────────────────────────
-     Applied via [data-theme="dark"] on <html>
-  ─────────────────────────────────────────────────────────── */
-  --color-bg-dark: #0f172a; /* page background */
-  --color-surface-dark: #1e293b; /* cards, nav */
-  --color-border-dark: #334155; /* all borders */
+  --color-success: #065f46;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #6ee7b7;
+  --color-success-dark: #86efac;
+  --color-success-bg-dark: #052e16;
 
-  --color-text-primary-dark: #f9fafb; /* main text — 18.1:1 on #0F172A  */
-  --color-text-secondary-dark: #cbd5e1; /* subtitles */
-  --color-text-muted-dark: #94a3b8; /* hints */
-
-  --color-focus-dark: #60a5fa; /* keyboard focus ring in dark mode */
-
-  /* ── SEMANTIC — danger / error ────────────────────────────*/
-  --color-danger: #b91c1c; /* error text (light mode) */
-  --color-danger-bg: #fef2f2; /* error message background */
-  --color-danger-border: #fecaca; /* error message border */
-  --color-danger-dark: #fca5a5; /* error text (dark mode) */
-  --color-danger-bg-dark: #450a0a; /* error background (dark mode) */
-
-  /* ── SEMANTIC — success ───────────────────────────────────*/
-  --color-success: #065f46; /* success text (light mode) */
-  --color-success-bg: #ecfdf5; /* success background */
-  --color-success-border: #6ee7b7; /* success border */
-  --color-success-dark: #86efac; /* success text (dark mode) */
-  --color-success-bg-dark: #052e16; /* success background (dark mode) */
-
-  /* ── BADGE COLORS — Physical ──────────────────────────────*/
   --color-badge-physical-bg: #d1fae5;
   --color-badge-physical-fg: #064e3b;
   --color-badge-physical-bg-dark: #052e16;
   --color-badge-physical-fg-dark: #6ee7b7;
 
-  /* ── BADGE COLORS — Visual ────────────────────────────────*/
   --color-badge-visual-bg: #dbeafe;
   --color-badge-visual-fg: #1e3a8a;
   --color-badge-visual-bg-dark: #0c1a4e;
   --color-badge-visual-fg-dark: #93c5fd;
 
-  /* ── BADGE COLORS — Hearing ───────────────────────────────*/
   --color-badge-hearing-bg: #fef3c7;
   --color-badge-hearing-fg: #78350f;
   --color-badge-hearing-bg-dark: #3b1e00;
   --color-badge-hearing-fg-dark: #fcd34d;
 
-  /* ── BADGE COLORS — Mental Health ────────────────────────*/
   --color-badge-mental-bg: #ede9fe;
   --color-badge-mental-fg: #3b0764;
   --color-badge-mental-bg-dark: #1e0a3c;
   --color-badge-mental-fg-dark: #c4b5fd;
 
-  /* ── BADGE COLORS — Speech ────────────────────────────────*/
   --color-badge-speech-bg: #ffe4e6;
   --color-badge-speech-fg: #881337;
   --color-badge-speech-bg-dark: #4c0519;
   --color-badge-speech-fg-dark: #fda4af;
 
-  /* ── BADGE COLORS — Intellectual ─────────────────────────*/
   --color-badge-intellectual-bg: #ecfdf5;
   --color-badge-intellectual-fg: #065f46;
   --color-badge-intellectual-bg-dark: #052e16;
   --color-badge-intellectual-fg-dark: #6ee7b7;
 
-  /* ── MAP COLORS ───────────────────────────────────────────*/
-  --color-map-bg: #e4eef5; /* map area background (light) */
-  --color-map-road: #b0c4d8; /* road/grid lines (light) */
-  --color-map-bg-dark: #0d1b2e; /* map area background (dark) */
-  --color-map-road-dark: #1e3a5f; /* road/grid lines (dark) */
+  --color-map-bg: #e4eef5;
+  --color-map-road: #b0c4d8;
+  --color-map-bg-dark: #0d1b2e;
+  --color-map-road-dark: #1e3a5f;
 
-  /* ── PIN COLORS — colorblind-safe palette ─────────────────
-     Tested against deuteranopia, protanopia, and tritanopia.
-     Never rely on these alone — always pair with a label.
-  ─────────────────────────────────────────────────────────── */
-  --color-pin-physical: #0e7490; /* teal */
-  --color-pin-visual: #065f46; /* dark green */
-  --color-pin-hearing: #92400e; /* amber-brown */
-  --color-pin-mental: #5b21b6; /* violet */
-  --color-pin-speech: #9d174d; /* rose */
+  --color-pin-physical: #0e7490;
+  --color-pin-visual: #065f46;
+  --color-pin-hearing: #92400e;
+  --color-pin-mental: #5b21b6;
+  --color-pin-speech: #9d174d;
 }
 
-/* ── BASE STYLES ──────────────────────────────────────────── */
 @layer base {
   body {
     font-family: var(--font-body);
@@ -132,13 +104,11 @@
       color 0.3s;
   }
 
-  /* Dark mode — applied by setting data-theme="dark" on <html> */
-  [data-theme="dark"] body {
+  .dark body {
     background-color: var(--color-bg-dark);
     color: var(--color-text-primary-dark);
   }
 
-  /* Headings — same font, just heavier weight */
   h1,
   h2,
   h3,
@@ -147,20 +117,10 @@
   h6 {
     font-family: var(--font-body);
     font-weight: 700;
-    color: var(--color-text-primary);
     line-height: 1.2;
   }
 
-  [data-theme="dark"] h1,
-  [data-theme="dark"] h2,
-  [data-theme="dark"] h3,
-  [data-theme="dark"] h4,
-  [data-theme="dark"] h5,
-  [data-theme="dark"] h6 {
-    color: var(--color-text-primary-dark);
-  }
-
-  /* Minimum touch target size for all interactive elements */
+  /* Minimum 44×44px touch target on all interactive elements (WCAG 2.5.5) */
   button,
   a,
   input,
@@ -170,32 +130,60 @@
     font-family: var(--font-body);
   }
 
-  /* Keyboard focus ring — visible on EVERY interactive element */
+  /* Visible focus ring on every interactive element (WCAG 2.4.7) */
   :focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 3px;
     border-radius: 4px;
   }
-
-  [data-theme="dark"] :focus-visible {
+  .dark :focus-visible {
     outline-color: var(--color-focus-dark);
   }
 
-  /* Respect user preference for reduced motion */
+  /* Skip link — visually hidden until focused (WCAG 2.4.1) */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /*
+   * High contrast mode (WCAG 1.4.6 Enhanced Contrast)
+   * Applied via .high-contrast class on <html> by AccessibilityContext.
+   * Overrides palette to pure black/white for maximum legibility.
+   */
+  .high-contrast {
+    --color-text-primary: #000000;
+    --color-text-secondary: #0a0a0a;
+    --color-text-muted: #1a1a1a;
+    --color-bg: #ffffff;
+    --color-surface: #f0f0f0;
+    --color-border: #000000;
+    --color-primary: #004400;
+    --color-primary-hover: #002200;
+  }
+  .dark.high-contrast {
+    --color-text-primary-dark: #ffffff;
+    --color-text-secondary-dark: #f0f0f0;
+    --color-text-muted-dark: #d0d0d0;
+    --color-bg-dark: #000000;
+    --color-surface-dark: #111111;
+    --color-border-dark: #ffffff;
+    --color-primary-dark: #6aff6a;
+  }
+
+  /* Respect user OS preference for reduced motion (WCAG 2.3.3) */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       transition: none !important;
       animation: none !important;
-    }
-  }
-
-  /* Respect OS dark mode on first load (before JS runs) */
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: var(--color-bg-dark);
-      color: var(--color-text-primary-dark);
     }
   }
 }

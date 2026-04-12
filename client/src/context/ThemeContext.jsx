@@ -1,34 +1,41 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 
-const ThemeContext = createContext();
+export const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    // Check localStorage first, then respect OS preference
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+  const [isDark, setIsDark] = useState(() => {
+    // 1. Honour saved user preference
+    const saved = localStorage.getItem("abilitymap-theme");
+    if (saved) return saved === "dark";
+    // 2. Fall back to OS preference (WCAG 1.4.3 support)
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
-    //  CSS uses [data-theme="dark"] on <html>, not a class
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    // Tailwind darkMode: 'class' — toggle "dark" on <html>
+    document.documentElement.classList.toggle("dark", isDark);
+    localStorage.setItem("abilitymap-theme", isDark ? "dark" : "light");
+  }, [isDark]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  };
+  // Also listen for OS theme changes at runtime
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e) => {
+      // Only auto-follow OS if the user hasn't saved a manual preference
+      if (!localStorage.getItem("abilitymap-theme")) {
+        setIsDark(e.matches);
+      }
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const toggleTheme = () => setIsDark((prev) => !prev);
+  console.log("Current theme state:", isDark);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
-}
-
-export function useTheme() {
-  return useContext(ThemeContext);
 }
