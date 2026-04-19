@@ -107,11 +107,7 @@ export default function AccessibilityBar() {
         Accessibility
       </span>
 
-      {/* ── FONT SIZE GROUP ──────────────────────────────────────────
-          role="group" + aria-label groups the three controls so screen
-          readers announce "Font size control group" before each button.
-          The live region below announces the current size on change.
-      ─────────────────────────────────────────────────────────────── */}
+      {/* ── FONT SIZE GROUP ────────────────────────────────────────── */}
       <div
         role="group"
         aria-label="Font size control"
@@ -125,8 +121,7 @@ export default function AccessibilityBar() {
           A-
         </BarBtn>
 
-        {/* Visual track — aria-hidden, the live region below is the
-            accessible equivalent (WCAG 1.3.1) */}
+        {/* Visual track — aria-hidden */}
         <div
           aria-hidden="true"
           className="w-24 h-1 rounded-full shrink-0 transition-all duration-200"
@@ -137,7 +132,7 @@ export default function AccessibilityBar() {
           }}
         />
 
-        {/* Live region — screen readers announce size changes (WCAG 4.1.3) */}
+        {/* Live region — screen readers announce size changes */}
         <span
           role="status"
           aria-live="polite"
@@ -147,11 +142,9 @@ export default function AccessibilityBar() {
             "text-text-muted dark:text-text-muted-dark",
           )}
         >
-          {/* Visible short label */}
           <span aria-hidden="true">
             {isDefault ? "Default" : fontSize < 17 ? "Smaller" : "Larger"}
           </span>
-          {/* Full label for screen readers only */}
           <span className="sr-only">{fontSizeLabel}</span>
         </span>
 
@@ -167,11 +160,7 @@ export default function AccessibilityBar() {
 
       <Sep />
 
-      {/* ── HIGH CONTRAST ───────────────────────────────────────────
-          aria-pressed communicates on/off state to screen readers.
-          Visual ring reinforces the pressed state without relying on
-          colour alone (WCAG 1.4.1).
-      ─────────────────────────────────────────────────────────────── */}
+      {/* ── HIGH CONTRAST ─────────────────────────────────────────── */}
       <BarBtn
         aria-label={
           highContrast
@@ -185,35 +174,27 @@ export default function AccessibilityBar() {
           highContrast && "ring-2 ring-primary dark:ring-primary-dark",
         )}
       >
-        {/* Visible A+ label */}
         <span aria-hidden="true">A+</span>
       </BarBtn>
 
       <Sep />
 
-      {/* ── DARK MODE ────────────────────────────────────────────────
-          aria-label updates dynamically so screen readers announce
-          what clicking will do, not the current state (clearer UX).
-          aria-pressed communicates current state separately.
-      ─────────────────────────────────────────────────────────────── */}
+      {/* ── DARK MODE ─────────────────────────────────────────────── */}
       <BarBtn
         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         aria-pressed={isDark}
         onClick={toggleTheme}
       >
-        {/* Icon container */}
         <span
           aria-hidden="true"
           className="text-[18px] flex items-center justify-center"
         >
           {isDark ? (
-            <FaSun className="text-yellow-400" /> // Bright Yellow for Sun
+            <FaSun className="text-yellow-400" />
           ) : (
-            <FaMoon className="text-slate-400" /> // Silver/Grey-Blue for Moon
+            <FaMoon className="text-slate-400" />
           )}
         </span>
-
-        {/* Visible button text */}
         <span aria-hidden="true" className="ml-2">
           {isDark ? "Light Mode" : "Dark Mode"}
         </span>
@@ -221,21 +202,22 @@ export default function AccessibilityBar() {
 
       <Sep />
 
-      {/* ── READ PAGE ────────────────────────────────────────────────
-          Uses the Web Speech API. aria-label is explicit.
-          aria-pressed would be added here if you implement a stop/read toggle.
-      ─────────────────────────────────────────────────────────────── */}
+      {/* ── READ PAGE ─────────────────────────────────────────────── */}
       <BarBtn
         aria-label={isSpeaking ? "Stop reading page" : "Read page aloud"}
         aria-pressed={isSpeaking}
-        onClick={readPage} // <--- Trigger the function from Provider
-        className={cn(isSpeaking && "border-primary text-primary")}
+        onClick={readPage}
+        className={cn(
+          isSpeaking && [
+            "border-red-400 dark:border-red-500",
+            "text-red-600 dark:text-red-400",
+          ],
+        )}
       >
         <span
           aria-hidden="true"
           className="text-[16px] flex items-center justify-center"
         >
-          {/* Switch icon and color based on speech state */}
           {isSpeaking ? (
             <FaStop className="text-red-500" />
           ) : (

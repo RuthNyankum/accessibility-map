@@ -7,55 +7,27 @@ const MAX = 24;
 const DEFAULT = 17;
 
 export function AccessibilityProvider({ children }) {
+  // ── Font size ────────────────────────────────────────────────────────────
   const [fontSize, setFontSize] = useState(() => {
     const saved = localStorage.getItem("abilitymap-fontsize");
     return saved ? parseInt(saved, 10) : DEFAULT;
   });
 
+  // ── High contrast ────────────────────────────────────────────────────────
   const [highContrast, setHighContrast] = useState(() => {
     return localStorage.getItem("abilitymap-highcontrast") === "true";
   });
 
-  // ── READ PAGE STATE ──────────────────────────────────────
-  // utteranceRef: Stores the "speech" object so we can track it
-  // isSpeaking: Boolean to toggle button icons/text in the UI
-  const utteranceRef = useRef(null);
+  // ── Speech ───────────────────────────────────────────────────────────────
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  /**
-   * readPage (WCAG 1.1.1 / 4.1.2)
-   * Uses Web Speech API to read the content of #main-content.
-   * Includes a toggle to stop speech if called while active.
-   */
-  const readPage = () => {
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      return;
-    }
+  // Tracks exactly who is speaking:
+  // "page"         — the Read Page button in AccessibilityBar
+  // "card-{id}"    — a specific card, e.g. "card-1", "card-2"
+  // null           — nothing is speaking
+  const [speakingId, setSpeakingId] = useState(null);
 
-    // Targets the main content area specifically to avoid reading the nav/footer
-    const main = document.getElementById("main-content");
-    const text = main?.innerText || "";
-
-    if (!text) return; // Safety check
-
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    // Listeners to reset state when the voice finishes or hits an error
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-    setIsSpeaking(true);
-  };
-
-  // Cleanup: Stop speaking if the user closes the site or navigates away
-  useEffect(() => {
-    return () => window.speechSynthesis.cancel();
-  }, []);
-  // ──────────────────────────────────────────────────────────────
+  const utteranceRef = useRef(null);
 
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}px`;
@@ -67,6 +39,83 @@ export function AccessibilityProvider({ children }) {
     localStorage.setItem("abilitymap-highcontrast", highContrast);
   }, [highContrast]);
 
+  useEffect(() => {
+    return () => window.speechSynthesis.cancel();
+  }, []);
+
+  // ── Core speak engine ────────────────────────────────────────────────────
+  // id: "page" | "card-{serviceId}" — unique identifier of the caller
+  const speak = (text, id) => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setSpeakingId(null);
+
+    if (!text?.trim()) return;
+
+    // Split at sentence boundaries — fixes Chrome 250-word cutoff bug
+    const chunks = text
+      .replace(/([.!?])\s+/g, "$1|")
+      .split("|")
+      .filter(Boolean);
+
+    let index = 0;
+
+    const speakNext = () => {
+      if (index >= chunks.length) {
+        setIsSpeaking(false);
+        setSpeakingId(null);
+        return;
+      }
+      const u = new SpeechSynthesisUtterance(chunks[index]);
+      u.lang = "en-GH";
+      u.rate = 0.95;
+      u.onend = () => {
+        index++;
+        speakNext();
+      };
+      u.onerror = () => {
+        setIsSpeaking(false);
+        setSpeakingId(null);
+      };
+      utteranceRef.current = u;
+      window.speechSynthesis.speak(u);
+      if (index === 0) {
+        setIsSpeaking(true);
+        setSpeakingId(id);
+      }
+    };
+
+    speakNext();
+  };
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setSpeakingId(null);
+  };
+
+  // ── readPage — AccessibilityBar ──────────────────────────────────────────
+  const readPage = () => {
+    if (isSpeaking && speakingId === "page") {
+      stopSpeaking();
+      return;
+    }
+    const text =
+      document.getElementById("main-content")?.innerText?.trim() || "";
+    speak(text, "page");
+  };
+
+  // ── readText — CardReadButton ────────────────────────────────────────────
+  // cardId must be unique per card — use service.id
+  const readText = (text, cardId) => {
+    const id = `card-${cardId}`;
+    if (isSpeaking && speakingId === id) {
+      stopSpeaking();
+      return;
+    }
+    speak(text, id);
+  };
+
   return (
     <AccessibilityContext.Provider
       value={{
@@ -76,11 +125,15 @@ export function AccessibilityProvider({ children }) {
         increase: () => setFontSize((p) => Math.min(MAX, p + 1)),
         decrease: () => setFontSize((p) => Math.max(MIN, p - 1)),
         reset: () => setFontSize(DEFAULT),
+
         highContrast,
         toggleHighContrast: () => setHighContrast((p) => !p),
-        // Exporting the new speech tools
+
         isSpeaking,
+        speakingId, // exposed so each CardReadButton can check its own id
         readPage,
+        readText,
+        stopSpeaking,
       }}
     >
       {children}

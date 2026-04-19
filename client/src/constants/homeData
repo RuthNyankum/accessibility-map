@@ -1,0 +1,29 @@
+export const STATS = [
+  { value: "120+", label: "Services listed" },
+  { value: "10", label: "Regions covered" },
+  { value: "6", label: "Disability types" },
+];
+
+export const DISABILITY_TYPES = [
+  "All types",
+  "Physical Disability",
+  "Visual Impairment",
+  "Hearing Impairment",
+  "Mental Health",
+  "Speech & Language",
+  "Intellectual Disability",
+];
+
+export const REGIONS = [
+  "All regions",
+  "Accra",
+  "Kumasi",
+  "Tamale",
+  "Cape Coast",
+  "Takoradi",
+  "Ho",
+  "Koforidua",
+  "Sunyani",
+  "Wa",
+  "Bolgatanga",
+];
