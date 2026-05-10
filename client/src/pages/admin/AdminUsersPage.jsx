@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { cn } from "../../utils/cn";
 import { FaTrash, FaUserShield, FaUser, FaEye, FaTimes } from "react-icons/fa";
 import { Badge } from "../../components/common/Badge";
+import API from "../../services/api";
 
 const STATUS_PILL = {
   approved:
@@ -18,12 +19,10 @@ function UserServicesModal({ user, onClose }) {
   useEffect(() => {
     const fetchUserServices = async () => {
       try {
-        const token = localStorage.getItem("abilitymap-token");
-        const res = await fetch("/api/services/admin/all", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        const all = data.services || [];
+        const res = await API.get("/api/services/admin/all");
+
+        const all = res.data.services || [];
+
         setServices(all.filter((s) => s.submittedBy?._id === user._id));
       } catch (err) {
         console.error("Failed to fetch services:", err);
@@ -31,12 +30,15 @@ function UserServicesModal({ user, onClose }) {
         setLoading(false);
       }
     };
+
     fetchUserServices();
 
     const handleKey = (e) => {
       if (e.key === "Escape") onClose();
     };
+
     window.addEventListener("keydown", handleKey);
+
     return () => window.removeEventListener("keydown", handleKey);
   }, [user._id, onClose]);
 
@@ -163,14 +165,16 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     document.title = "Users — AbilityMap Admin";
+
     const fetchUsers = async () => {
-      const token = localStorage.getItem("abilitymap-token");
-      const res = await fetch("/api/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setUsers(data.users || []);
+      try {
+        const res = await API.get("/api/users");
+        setUsers(res.data.users || []);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
     };
+
     fetchUsers();
   }, []);
 
@@ -193,32 +197,43 @@ export default function AdminUsersPage() {
   );
 
   const toggleRole = async (id) => {
-    const user = users.find((u) => u._id === id);
-    const newRole = user.role === "admin" ? "user" : "admin";
-    const token = localStorage.getItem("abilitymap-token");
-    await fetch(`/api/users/${id}/role`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ role: newRole }),
-    });
-    setUsers((p) => p.map((u) => (u._id === id ? { ...u, role: newRole } : u)));
-    showToast(
-      `${user.name} is now ${newRole === "admin" ? "an admin" : "a regular user"}`,
-    );
+    try {
+      const user = users.find((u) => u._id === id);
+      if (!user) return;
+
+      const newRole = user.role === "admin" ? "user" : "admin";
+
+      await API.patch(`/api/users/${id}/role`, {
+        role: newRole,
+      });
+
+      setUsers((p) =>
+        p.map((u) => (u._id === id ? { ...u, role: newRole } : u)),
+      );
+
+      showToast(
+        `${user.name} is now ${
+          newRole === "admin" ? "an admin" : "a regular user"
+        }`,
+      );
+    } catch (err) {
+      console.error("Role update failed:", err);
+      showToast("Failed to update role");
+    }
   };
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem("abilitymap-token");
-    await fetch(`/api/users/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setUsers((p) => p.filter((u) => u._id !== id));
-    setDeleteConfirm(null);
-    showToast("User deleted");
+    try {
+      await API.delete(`/api/users/${id}`);
+
+      setUsers((p) => p.filter((u) => u._id !== id));
+      setDeleteConfirm(null);
+
+      showToast("User deleted");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      showToast("Failed to delete user");
+    }
   };
 
   const filterBtn = (val) =>

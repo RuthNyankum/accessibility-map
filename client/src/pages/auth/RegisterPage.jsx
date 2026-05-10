@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import API from "../../services/api";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -46,20 +47,21 @@ export default function RegisterPage() {
     setErrors({});
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        }),
+      // Use Axios instance (already imported)
+      const res = await API.post("/api/auth/register", {
+        name: form.name,
+        email: form.email,
+        password: form.password,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
+      // Axios automatically parses JSON – no need for res.json()
+      const data = res.data;
+      if (!res.status === 201)
+        throw new Error(data.message || "Registration failed");
       navigate("/login?registered=true");
     } catch (err) {
-      setServerError(err.message);
+      setServerError(
+        err.response?.data?.message || err.message || "Registration failed",
+      );
     } finally {
       setLoading(false);
     }

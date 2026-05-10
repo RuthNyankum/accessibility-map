@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import API from "../../services/api";
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -39,18 +40,18 @@ export default function ResetPasswordPage() {
     }
 
     setLoading(true);
+
     try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, password }),
+      const res = await API.post("/api/auth/reset-password", {
+        token,
+        password,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Reset failed");
+
       setMessage("Password reset successful! Redirecting to login...");
+
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || "Reset failed");
     } finally {
       setLoading(false);
     }

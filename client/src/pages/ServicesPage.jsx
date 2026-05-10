@@ -5,6 +5,7 @@ import { ServiceSearch } from "../components/services/ServiceSearch";
 import { ServiceFilter } from "../components/services/ServiceFilter";
 import { ServiceGrid } from "../components/services/ServiceGrid";
 import { ServicePagination } from "../components/services/ServicePagination";
+import API from "../services/api";
 
 const PER_PAGE = 8;
 
@@ -33,9 +34,8 @@ export default function ServicesPage() {
     document.title = "All Services — AbilityMap Ghana";
     const fetchServices = async () => {
       try {
-        const res = await fetch("/api/services?limit=100");
-        const data = await res.json();
-        setAllServices(data.services || []);
+        const res = await API.get("/api/services?limit=100");
+        setAllServices(res.data.services || []);
       } catch (err) {
         console.error(err);
       } finally {

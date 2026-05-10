@@ -9,6 +9,7 @@ import {
   FaListAlt,
   FaChartBar,
 } from "react-icons/fa";
+import API from "../../services/api";
 
 const ACTION_BADGE = {
   approved: "bg-[var(--color-success-bg)] text-[var(--color-success)] ...",
@@ -67,67 +68,85 @@ export default function AdminOverviewPage() {
 
   useEffect(() => {
     document.title = "Overview — AbilityMap Admin";
+
     const fetchStats = async () => {
-      const token = localStorage.getItem("abilitymap-token");
-      const headers = { Authorization: `Bearer ${token}` };
-      const [svcRes, usersRes] = await Promise.all([
-        fetch("/api/services/admin/all", { headers }),
-        fetch("/api/users", { headers }),
-      ]);
-      const svcData = await svcRes.json();
-      const userData = await usersRes.json();
-      const allServices = svcData.services || [];
-      const allUsers = userData.users || [];
-      const now = new Date();
-      const thisMonth = allServices.filter((s) => {
-        const d = new Date(s.createdAt);
-        return (
-          d.getMonth() === now.getMonth() &&
-          d.getFullYear() === now.getFullYear()
+      try {
+        const token = localStorage.getItem("abilitymap-token");
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        // 1. Fetch in parallel using Axios
+        const [svcRes, usersRes] = await Promise.all([
+          API.get("/api/services/admin/all", { headers }),
+          API.get("/api/users", { headers }),
+        ]);
+
+        const allServices = svcRes.data.services || [];
+        const allUsers = usersRes.data.users || [];
+
+        // 2. Stats calculation
+        const now = new Date();
+
+        const thisMonth = allServices.filter((s) => {
+          const d = new Date(s.createdAt);
+          return (
+            d.getMonth() === now.getMonth() &&
+            d.getFullYear() === now.getFullYear()
+          );
+        }).length;
+
+        setStats({
+          totalServices: allServices.length,
+          approved: allServices.filter((s) => s.status === "approved").length,
+          pending: allServices.filter((s) => s.status === "pending").length,
+          rejected: allServices.filter((s) => s.status === "rejected").length,
+          totalUsers: allUsers.length,
+          thisMonth,
+        });
+
+        setPending(
+          allServices.filter((s) => s.status === "pending").slice(0, 3),
         );
-      }).length;
-      setStats({
-        totalServices: allServices.length,
-        approved: allServices.filter((s) => s.status === "approved").length,
-        pending: allServices.filter((s) => s.status === "pending").length,
-        rejected: allServices.filter((s) => s.status === "rejected").length,
-        totalUsers: allUsers.length,
-        thisMonth,
-      });
-      setPending(allServices.filter((s) => s.status === "pending").slice(0, 3));
 
-      // Build recent activity from real data
-      const serviceActivity = allServices
-        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-        .slice(0, 5)
-        .map((s) => ({
-          id: s._id,
-          action:
-            s.status === "approved"
-              ? "approved"
-              : s.status === "rejected"
-                ? "rejected"
-                : "pending",
-          label: `${s.name} ${s.status}`,
-          at: new Date(s.updatedAt).toLocaleString(),
-        }));
+        // 3. Recent activity (services)
+        const serviceActivity = allServices
+          .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+          .slice(0, 5)
+          .map((s) => ({
+            id: s._id,
+            action:
+              s.status === "approved"
+                ? "approved"
+                : s.status === "rejected"
+                  ? "rejected"
+                  : "pending",
+            label: `${s.name} ${s.status}`,
+            at: new Date(s.updatedAt).toLocaleString(),
+          }));
 
-      const userActivity = allUsers
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 3)
-        .map((u) => ({
-          id: u._id,
-          action: "new_user",
-          label: `${u.name} joined`,
-          at: new Date(u.createdAt).toLocaleString(),
-        }));
+        // 4. Recent activity (users)
+        const userActivity = allUsers
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 3)
+          .map((u) => ({
+            id: u._id,
+            action: "new_user",
+            label: `${u.name} joined`,
+            at: new Date(u.createdAt).toLocaleString(),
+          }));
 
-      const combined = [...serviceActivity, ...userActivity]
-        .sort((a, b) => new Date(b.at) - new Date(a.at))
-        .slice(0, 6);
+        // 5. Merge activity
+        const combined = [...serviceActivity, ...userActivity]
+          .sort((a, b) => new Date(b.at) - new Date(a.at))
+          .slice(0, 6);
 
-      setRecent(combined);
+        setRecent(combined);
+      } catch (err) {
+        console.error("Failed to fetch stats:", err);
+      }
     };
+
     fetchStats();
   }, []);
 

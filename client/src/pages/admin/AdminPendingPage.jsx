@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { cn } from "../../utils/cn";
 import { Badge } from "../../components/common/Badge";
 import { FaCheck, FaTimes, FaEye } from "react-icons/fa";
+import API from "../../services/api";
 
 function ConfirmModal({ action, service, onConfirm, onCancel }) {
   const isApprove = action === "approve";
@@ -76,20 +77,26 @@ export default function AdminPendingPage() {
 
   useEffect(() => {
     document.title = "Pending Review — AbilityMap Admin";
+
     const fetchPending = async () => {
       try {
         const token = localStorage.getItem("abilitymap-token");
-        const res = await fetch("/api/services/admin/all?status=pending", {
-          headers: { Authorization: `Bearer ${token}` },
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        const res = await API.get("/api/services/admin/all?status=pending", {
+          headers,
         });
-        const data = await res.json();
-        setServices(data.services || []);
+
+        setServices(res.data.services || []);
       } catch (err) {
         console.error("Failed to fetch pending services:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchPending();
   }, []);
 
@@ -101,19 +108,14 @@ export default function AdminPendingPage() {
   const handleConfirm = async () => {
     const { action, service } = confirm;
     setConfirm(null);
+
     try {
-      const token = localStorage.getItem("abilitymap-token");
-      await fetch(`/api/services/${service._id}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          status: action === "approve" ? "approved" : "rejected",
-        }),
+      await API.patch(`/api/services/${service._id}/status`, {
+        status: action === "approve" ? "approved" : "rejected",
       });
+
       setServices((prev) => prev.filter((s) => s._id !== service._id));
+
       showToast(
         action === "approve"
           ? `"${service.name}" approved`

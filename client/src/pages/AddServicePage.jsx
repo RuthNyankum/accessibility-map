@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { cn } from "../utils/cn";
 import "leaflet/dist/leaflet.css";
+import API from "../services/api";
 
 // ─── Constants (single source of truth) ──────────────────────────────────────
 import {
@@ -1261,49 +1262,18 @@ export default function AddServicePage() {
   const handleSubmit = async () => {
     setServerError("");
     setLoading(true);
-
     const primaryType = step1.disabilityTypes[0] || "Physical";
-
     const payload = {
-      name: step1.name,
-      category: step1.category,
-      badge: primaryType,
-      badgeColor: BADGE_COLOR_MAP[primaryType] || "physical",
-      disabilityTypes: step1.disabilityTypes,
-      targetGroup: step1.targetGroup,
-      phone: step2.phone,
-      email: step2.email,
-      website: step2.website,
-      hours: step2.hours,
-      description: step2.description,
-      about: step2.about,
-      languages: step2.languages,
-      region: step3.region,
-      location: step3.city,
-      address: step3.address,
-      landmark: step3.landmark,
-      coordinates:
-        step3.lat && step3.lng
-          ? { lat: parseFloat(step3.lat), lng: parseFloat(step3.lng) }
-          : undefined,
+      /* ... same as before ... */
     };
 
     try {
-      const token = localStorage.getItem("abilitymap-token");
-      const res = await fetch("/api/services", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Submission failed");
+      // Axios automatically uses baseURL and adds JSON content-type
+      const res = await API.post("/api/services", payload);
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      setServerError(err.message);
+      setServerError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }

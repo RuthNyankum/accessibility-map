@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../utils/cn";
 import { ServiceCard } from "../components/services/ServiceCard";
 import { GhanaFlag } from "../assets/icons/GhanaFlag";
+import API from "../services/api";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -16,31 +17,28 @@ export default function HomePage() {
   const [type, setType] = useState("All types");
   const [region, setRegion] = useState("All regions");
 
-  // Fetch all dynamic data
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
+        // Use Axios for all three requests
         const [statsRes, constantsRes, featuredRes] = await Promise.all([
-          fetch("/api/stats"),
-          fetch("/api/constants"),
-          fetch("/api/services/featured?limit=3"),
+          API.get("/api/stats"),
+          API.get("/api/constants"),
+          API.get("/api/services/featured?limit=3"),
         ]);
 
-        const statsData = await statsRes.json();
-        const constantsData = await constantsRes.json();
-        const featuredData = await featuredRes.json();
+        const statsData = statsRes.data;
+        const constantsData = constantsRes.data;
+        const featuredData = featuredRes.data;
 
-        // Format stats for display
         setStats([
           { value: statsData.totalServices, label: "Services" },
           { value: statsData.totalRegions, label: "Regions" },
           { value: statsData.totalCities, label: "Cities" },
         ]);
 
-        // Add "All types" and "All regions" as first options
         setDisabilityTypes(["All types", ...constantsData.disabilityTypes]);
         setRegions(["All regions", ...constantsData.regions]);
-
         setFeatured(featuredData.services || []);
       } catch (err) {
         console.error("Failed to load home page data:", err);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "../../utils/cn";
+import API from "../../services/api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -20,19 +21,13 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Something went wrong");
+      const res = await API.post("/api/auth/forgot-password", { email });
       setMessage(
         "If an account with that email exists, we've sent a password reset link.",
       );
       setEmail("");
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }

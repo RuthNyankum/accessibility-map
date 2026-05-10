@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-// ✅ Get API base URL from environment (set in Vercel)
-const API_BASE = import.meta.env.VITE_API_URL || "";
+import API from "../../services/api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -39,15 +37,9 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // ✅ Use API_BASE to point to Render backend
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login failed");
+      //  Use Axios instance
+      const res = await API.post("/api/auth/login", form);
+      const data = res.data;
 
       localStorage.setItem("abilitymap-token", data.token);
       localStorage.setItem("abilitymap-user", JSON.stringify(data.user));
@@ -60,7 +52,9 @@ export default function LoginPage() {
         navigate(from);
       }
     } catch (err) {
-      setServerError(err.message);
+      setServerError(
+        err.response?.data?.message || err.message || "Login failed",
+      );
     } finally {
       setLoading(false);
     }

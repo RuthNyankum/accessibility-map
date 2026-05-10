@@ -10,6 +10,7 @@ import {
   FaMap,
   FaArrowRight,
 } from "react-icons/fa";
+import API from "../services/api";
 
 export default function ServiceDetailsPage() {
   const { id } = useParams();
@@ -37,50 +38,45 @@ export default function ServiceDetailsPage() {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const token = localStorage.getItem("abilitymap-token");
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         // 1. Fetch main service
-        const res = await fetch(`/api/services/${id}`, { headers });
-        if (!res.ok) {
-          if (res.status === 404) throw new Error("Service not found");
-          throw new Error("Failed to load service");
-        }
-        const data = await res.json();
-        const mainService = data.service;
+        const res = await API.get(`/api/services/${id}`, { headers });
+
+        const mainService = res.data.service;
         setService(mainService);
+
         document.title = `${mainService.name} — AbilityMap Ghana`;
 
         // 2. Fetch similar services (by category)
         let similarList = [];
+
         if (mainService.category) {
-          const similarRes = await fetch(
+          const similarRes = await API.get(
             `/api/services?category=${encodeURIComponent(mainService.category)}&limit=4`,
             { headers },
           );
-          if (similarRes.ok) {
-            const similarData = await similarRes.json();
-            similarList = (similarData.services || []).filter(
-              (s) => s._id !== mainService._id,
-            );
-          }
+
+          similarList = (similarRes.data.services || []).filter(
+            (s) => s._id !== mainService._id,
+          );
         }
 
-        // 3. If no similar services found, get other services (any category)
+        // 3. If no similar services found, get other services
         if (similarList.length === 0) {
-          const otherRes = await fetch(`/api/services?limit=3`, { headers });
-          if (otherRes.ok) {
-            const otherData = await otherRes.json();
-            similarList = (otherData.services || []).filter(
-              (s) => s._id !== mainService._id,
-            );
-          }
+          const otherRes = await API.get(`/api/services?limit=3`, { headers });
+
+          similarList = (otherRes.data.services || []).filter(
+            (s) => s._id !== mainService._id,
+          );
         }
 
         setSimilar(similarList.slice(0, 3));
       } catch (err) {
-        setError(err.message);
+        setError(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }

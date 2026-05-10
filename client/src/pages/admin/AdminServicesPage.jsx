@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { Badge } from "../../components/common/Badge";
 import { FaTrash, FaStar, FaRegStar, FaEye } from "react-icons/fa";
+import API from "../../services/api";
 
 const STATUS_PILL = {
   approved:
@@ -186,20 +187,18 @@ export default function AdminServicesPage() {
 
   useEffect(() => {
     document.title = "All Services — AbilityMap Admin";
+
     const fetchServices = async () => {
       try {
-        const token = localStorage.getItem("abilitymap-token");
-        const res = await fetch("/api/services/admin/all", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setServices(data.services || []);
+        const res = await API.get("/api/services/admin/all");
+        setServices(res.data.services || []);
       } catch (err) {
         console.error("Failed to fetch services:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchServices();
   }, []);
 
@@ -223,47 +222,37 @@ export default function AdminServicesPage() {
 
   const handleDelete = async (id) => {
     try {
-      const token = localStorage.getItem("abilitymap-token");
-      await fetch(`/api/services/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.delete(`/api/services/${id}`);
+
       setServices((prev) => prev.filter((s) => s._id !== id));
       setDeleteConfirm(null);
+
       showToast("Service deleted");
     } catch (err) {
       console.error("Delete failed:", err);
+      showToast("Delete failed");
     }
   };
 
   const toggleFeatured = async (id) => {
     try {
-      const token = localStorage.getItem("abilitymap-token");
       const service = services.find((s) => s._id === id);
       if (!service) return;
+
       const newFeatured = !service.featured;
-      const res = await fetch(`/api/services/${id}/feature`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ featured: newFeatured }),
+
+      const res = await API.patch(`/api/services/${id}/feature`, {
+        featured: newFeatured,
       });
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Server responded with ${res.status}: ${errorText}`);
-      }
-      const data = await res.json();
-      const updatedFeatured = data.service?.featured ?? data.featured;
-      if (updatedFeatured === undefined) {
-        throw new Error("Backend response missing 'featured' field");
-      }
+
+      const updatedFeatured = res.data.service?.featured ?? res.data.featured;
+
       setServices((prev) =>
         prev.map((s) =>
           s._id === id ? { ...s, featured: updatedFeatured } : s,
         ),
       );
+
       showToast(
         `Service ${newFeatured ? "featured" : "unfeatured"} successfully`,
       );
