@@ -1,4 +1,5 @@
 import Service from "../models/Service.js";
+import { DISABILITY_TYPES, REGIONS } from "../constants/serviceConstants.js";
 
 // GET /api/services
 // Public — returns only approved services
@@ -234,6 +235,33 @@ export const toggleFeatured = async (req, res, next) => {
         featured: service.featured,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/stats
+// Public — returns counts for the home page stats
+export const getStats = async (req, res, next) => {
+  try {
+    const totalServices = await Service.countDocuments({ status: "approved" });
+    const regions = await Service.distinct("region", { status: "approved" });
+    const cities = await Service.distinct("location", { status: "approved" });
+    res.json({
+      totalServices,
+      totalRegions: regions.length,
+      totalCities: cities.length,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/constants
+// Public — returns static dropdown data for the whole app
+export const getConstants = async (req, res, next) => {
+  try {
+    res.json({ disabilityTypes: DISABILITY_TYPES, regions: REGIONS });
   } catch (err) {
     next(err);
   }

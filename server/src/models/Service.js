@@ -1,4 +1,9 @@
 import mongoose from "mongoose";
+import {
+  DISABILITY_TYPES,
+  BADGE_COLORS,
+  REGIONS,
+} from "../constants/serviceConstants.js";
 
 const serviceSchema = new mongoose.Schema(
   {
@@ -13,27 +18,13 @@ const serviceSchema = new mongoose.Schema(
     badge: {
       type: String,
       required: [true, "Service type is required"],
-      enum: [
-        "Physical",
-        "Visual",
-        "Hearing",
-        "Mental Health",
-        "Speech",
-        "Intellectual",
-      ],
+      enum: DISABILITY_TYPES,
     },
 
     // CSS color key used for the badge component
     badgeColor: {
       type: String,
-      enum: [
-        "physical",
-        "visual",
-        "hearing",
-        "mental",
-        "speech",
-        "intellectual",
-      ],
+      enum: BADGE_COLORS,
       required: true,
     },
 
@@ -49,24 +40,7 @@ const serviceSchema = new mongoose.Schema(
     region: {
       type: String,
       required: [true, "Region is required"],
-      enum: [
-        "Greater Accra",
-        "Ashanti",
-        "Western",
-        "Central",
-        "Eastern",
-        "Volta",
-        "Northern",
-        "Upper East",
-        "Upper West",
-        "Brong-Ahafo",
-        "Savannah",
-        "Bono East",
-        "Ahafo",
-        "Western North",
-        "Oti",
-        "North East",
-      ],
+      enum: REGIONS,
     },
 
     address: {

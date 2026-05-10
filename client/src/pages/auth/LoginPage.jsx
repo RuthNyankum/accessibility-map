@@ -3,6 +3,9 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
+// ✅ Get API base URL from environment (set in Vercel)
+const API_BASE = import.meta.env.VITE_API_URL || "";
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -36,7 +39,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      // ✅ Use API_BASE to point to Render backend
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -73,6 +77,8 @@ export default function LoginPage() {
         ? "border-[var(--color-danger)] focus:ring-[var(--color-danger)]"
         : "border-[var(--color-border)] dark:border-[var(--color-border-dark)] focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]",
     );
+
+  // ... (rest of the component JSX remains unchanged) ...
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-12 bg-(--color-bg) dark:bg-bg-dark transition-colors duration-300">
