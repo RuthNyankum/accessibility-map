@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { cn } from "../utils/cn";
+import API from "../services/api";
 
 export default function AdminRoute() {
   const [status, setStatus] = useState("checking");
@@ -8,24 +9,23 @@ export default function AdminRoute() {
   useEffect(() => {
     const verify = async () => {
       const token = localStorage.getItem("abilitymap-token");
+
       if (!token) {
         setStatus("none");
         return;
       }
+
       try {
-        const res = await fetch("/api/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
-          setStatus("none");
-          return;
-        }
-        const data = await res.json();
-        setStatus(data.user?.role === "admin" ? "admin" : "user");
+        const res = await API.get("/api/auth/me");
+
+        const user = res.data.user;
+
+        setStatus(user?.role === "admin" ? "admin" : "user");
       } catch {
         setStatus("none");
       }
     };
+
     verify();
   }, []);
 
@@ -45,5 +45,6 @@ export default function AdminRoute() {
 
   if (status === "none") return <Navigate to="/login" replace />;
   if (status === "user") return <Navigate to="/" replace />;
+
   return <Outlet />;
 }
