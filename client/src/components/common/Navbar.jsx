@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
+import { FaPlus, FaArrowRight } from "react-icons/fa";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -9,38 +10,47 @@ const NAV_LINKS = [
   { to: "/about", label: "About" },
 ];
 
-/**
- * Navbar accessibility notes:
- *
- * - <header> with role="banner" is the ARIA landmark for the page header (WCAG 1.3.6)
- * - <nav aria-label="Main navigation"> is a distinct ARIA landmark so screen
- *   reader users can jump straight to it (WCAG 2.4.1)
- * - NavLink sets aria-current="page" automatically when the route matches —
- *   this tells screen readers which page is active (WCAG 2.4.8)
- * - Mobile menu button uses aria-expanded and aria-controls (WCAG 4.1.2)
- * - Mobile menu closes on Escape key and on outside click (keyboard trap prevention)
- * - Logo link has descriptive aria-label — "Home" alone is ambiguous (WCAG 2.4.6)
- * - The "+ Add a Service" CTA uses a descriptive aria-label since the "+"
- *   symbol is not meaningful on its own to screen readers
- */
 export default function Navbar() {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const menuBtnRef = useRef(null);
 
-  // Close on Escape key
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("abilitymap-user");
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  const handleLogout = () => {
+    localStorage.removeItem("abilitymap-user");
+    localStorage.removeItem("abilitymap-token");
+    setUser(null);
+    window.dispatchEvent(new Event("abilitymap-auth"));
+    navigate("/");
+    if (menuOpen) setMenuOpen(false);
+  };
+
+  // Keyboard and click-outside handlers (unchanged)
   useEffect(() => {
     const handleKey = (e) => {
       if (e.key === "Escape" && menuOpen) {
         setMenuOpen(false);
-        menuBtnRef.current?.focus(); // Return focus to trigger (WCAG 2.1.2)
+        menuBtnRef.current?.focus();
       }
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
   }, [menuOpen]);
 
-  // Close on outside click
+  useEffect(() => {
+    const sync = () => {
+      const stored = localStorage.getItem("abilitymap-user");
+      setUser(stored ? JSON.parse(stored) : null);
+    };
+    window.addEventListener("abilitymap-auth", sync);
+    return () => window.removeEventListener("abilitymap-auth", sync);
+  }, []);
+
   useEffect(() => {
     const handleClick = (e) => {
       if (
@@ -76,6 +86,91 @@ export default function Navbar() {
           ],
     );
 
+  // "Add a Service" link – redirects to login if not authenticated
+  const handleAddServiceClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      navigate("/login");
+    }
+  };
+
+  // Desktop right side: always show "Add a Service", plus "Logout" if logged in
+  const renderDesktopAuthButtons = () => (
+    <div className="flex items-center gap-3">
+      <NavLink
+        to="/add-service"
+        onClick={handleAddServiceClick}
+        aria-label="Add a new disability support service"
+        className={cn(
+          "inline-flex items-center gap-1.5 px-5 rounded-lg text-[15px] font-bold no-underline min-h-[44px]",
+          "bg-primary text-(--color-primary-fg)",
+          "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
+          "hover:bg-primary-hover dark:hover:opacity-90",
+          "transition-colors duration-200",
+        )}
+      >
+        <FaPlus aria-hidden="true" />
+        <span>Add a Service</span>
+      </NavLink>
+      {user && (
+        <button
+          onClick={handleLogout}
+          className={cn(
+            "inline-flex items-center gap-1.5 px-5 rounded-lg text-[15px] font-bold min-h-[44px]",
+            "bg-danger text-white",
+            "hover:opacity-90 transition-colors duration-200",
+          )}
+        >
+          <FaArrowRight aria-hidden="true" />
+          <span>Logout</span>
+        </button>
+      )}
+    </div>
+  );
+
+  // Mobile menu items: always show "Add a Service", plus "Logout" if logged in
+  const renderMobileAuthItems = () => (
+    <>
+      <li>
+        <NavLink
+          to="/add-service"
+          onClick={(e) => {
+            if (!user) {
+              e.preventDefault();
+              navigate("/login");
+            }
+            setMenuOpen(false);
+          }}
+          className={cn(
+            "flex items-center justify-center gap-1.5 mt-2",
+            "px-5 rounded-lg text-[15px] font-bold min-h-[44px]",
+            "bg-primary text-(--color-primary-fg)",
+            "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
+          )}
+        >
+          <FaPlus aria-hidden="true" />
+          <span>Add a Service</span>
+        </NavLink>
+      </li>
+      {user && (
+        <li>
+          <button
+            onClick={handleLogout}
+            className={cn(
+              "w-full flex items-center justify-center gap-1.5 mt-2",
+              "px-5 rounded-lg text-[15px] font-bold min-h-[44px]",
+              "bg-danger text-white",
+              "hover:opacity-90",
+            )}
+          >
+            <FaArrowRight aria-hidden="true" />
+            <span>Logout</span>
+          </button>
+        </li>
+      )}
+    </>
+  );
+
   return (
     <header
       role="banner"
@@ -87,7 +182,7 @@ export default function Navbar() {
       )}
     >
       <div className="flex items-center justify-between h-16 px-8">
-        {/* Logo — descriptive aria-label, not just "AbilityMap Ghana" */}
+        {/* Logo */}
         <NavLink
           to="/"
           aria-label="AbilityMap Ghana — return to home page"
@@ -103,42 +198,31 @@ export default function Navbar() {
           AbilityMap Ghana
         </NavLink>
 
-        {/* Desktop nav — hidden on mobile */}
+        {/* Desktop nav */}
         <nav aria-label="Main navigation" className="hidden md:block">
           <ul className="flex items-center gap-1 list-none m-0 p-0" role="list">
             {NAV_LINKS.map(({ to, label }) => (
               <li key={to}>
-                {/* React Router NavLink auto-sets aria-current="page" */}
                 <NavLink to={to} end={to === "/"} className={navLinkClass}>
                   {label}
                 </NavLink>
               </li>
             ))}
+            {user?.role === "admin" && (
+              <li>
+                <NavLink to="/admin" className={navLinkClass}>
+                  Admin
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
 
+        {/* Desktop right side: Add a Service + conditional Logout */}
         <div className="flex items-center gap-3">
-          {/* CTA — visible on desktop, hidden on mobile (mobile nav has it) */}
-          <NavLink
-            to="/add-service"
-            aria-label="Add a new disability support service to the directory"
-            className={cn(
-              "hidden md:inline-flex items-center gap-1.5",
-              "px-5 rounded-lg text-[15px] font-bold no-underline min-h-[44px]",
-              "bg-primary text-(--color-primary-fg)",
-              "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
-              "hover:bg-primary-hover dark:hover:opacity-90",
-              "transition-colors duration-200",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-              "focus-visible:ring-focus dark:focus-visible:ring-focus-dark",
-            )}
-          >
-            {/* Hide "+" from screen readers — aria-label is the complete description */}
-            <span aria-hidden="true">+</span>
-            <span>Add a Service</span>
-          </NavLink>
+          {renderDesktopAuthButtons()}
 
-          {/* Mobile menu button */}
+          {/* Mobile hamburger */}
           <button
             ref={menuBtnRef}
             type="button"
@@ -157,7 +241,6 @@ export default function Navbar() {
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
             )}
           >
-            {/* Hamburger / X icon — purely visual */}
             <span
               aria-hidden="true"
               className={cn(
@@ -186,9 +269,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu
-          id matches aria-controls on the button above (WCAG 4.1.2)
-          role="dialog" not used here — this is a disclosure pattern, not a modal */}
+      {/* Mobile menu */}
       {menuOpen && (
         <nav
           id="mobile-menu"
@@ -213,24 +294,18 @@ export default function Navbar() {
                 </NavLink>
               </li>
             ))}
-            <li>
-              <NavLink
-                to="/add-service"
-                aria-label="Add a new disability support service to the directory"
-                onClick={() => setMenuOpen(false)}
-                className={cn(
-                  "flex items-center justify-center gap-1.5 mt-2",
-                  "px-5 rounded-lg text-[15px] font-bold no-underline min-h-[44px]",
-                  "bg-primary text-(--color-primary-fg)",
-                  "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
-                  "hover:bg-primary-hover",
-                  "transition-colors duration-200",
-                )}
-              >
-                <span aria-hidden="true">+</span>
-                <span>Add a Service</span>
-              </NavLink>
-            </li>
+            {user?.role === "admin" && (
+              <li>
+                <NavLink
+                  to="/admin"
+                  className={navLinkClass}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Admin
+                </NavLink>
+              </li>
+            )}
+            {renderMobileAuthItems()}
           </ul>
         </nav>
       )}

@@ -1,147 +1,3 @@
-// ─── Single source of truth for all service data ─────────────────────────────
-//
-// featured: true  → appears on HomePage featured section
-// featured: false → only on ServicesPage
-//
-// When you connect the backend, replace this array with an API call
-// and remove this file. The filter logic in each page stays the same.
-
-export const ALL_SERVICES = [
-  {
-    id: "1",
-    badge: "Physical",
-    badgeColor: "physical",
-    name: "Accra Rehab Center",
-    location: "Accra",
-    phone: "+233 30 000 0001",
-    description:
-      "Rehabilitation and physiotherapy services for people with physical disabilities.",
-    featured: true,
-  },
-  {
-    id: "2",
-    badge: "Visual",
-    badgeColor: "visual",
-    name: "Vision First Ghana",
-    location: "Kumasi",
-    phone: "+233 30 000 0001",
-    description:
-      "Counselling, psychotherapy, and community mental health programs.",
-    featured: true,
-  },
-  {
-    id: "3",
-    badge: "Hearing",
-    badgeColor: "hearing",
-    name: "Deaf Community Hub",
-    location: "Accra",
-    phone: "+233 30 000 0001",
-    description:
-      "Sign language support, deaf community resources, and hearing aid referrals.",
-    featured: true,
-  },
-  {
-    id: "4",
-    badge: "Mental Health",
-    badgeColor: "mental",
-    name: "Mental Wellness GH",
-    location: "Accra",
-    phone: "+233 30 000 0001",
-    description:
-      "Counselling, psychotherapy, and community mental health programs.",
-    featured: true,
-  },
-  {
-    id: "5",
-    badge: "Hearing",
-    badgeColor: "hearing",
-    name: "Deaf Community Hub",
-    location: "Accra",
-    phone: "+233 30 000 0001",
-    description:
-      "Counselling, psychotherapy, and community mental health programs.",
-    featured: false,
-  },
-  {
-    id: "6",
-    badge: "Visual",
-    badgeColor: "visual",
-    name: "Vision First Ghana",
-    location: "Kumasi",
-    phone: "+233 30 000 0001",
-    description:
-      "Counselling, psychotherapy, and community mental health programs.",
-    featured: false,
-  },
-  {
-    id: "7",
-    badge: "Mental Health",
-    badgeColor: "mental",
-    name: "Mental Wellness GH",
-    location: "Accra",
-    phone: "+233 30 000 0001",
-    description:
-      "Counselling, psychotherapy, and community mental health programs.",
-    featured: false,
-  },
-  {
-    id: "8",
-    badge: "Speech",
-    badgeColor: "speech",
-    name: "Speech Care GH",
-    location: "Tamale",
-    phone: "+233 30 000 0001",
-    description: "Speech therapy and language development support.",
-    featured: false,
-  },
-  {
-    id: "9",
-    badge: "Intellectual",
-    badgeColor: "intellectual",
-    name: "Ability Support Centre",
-    location: "Cape Coast",
-    phone: "+233 30 000 0001",
-    description:
-      "Day programs and support for people with intellectual disabilities.",
-    featured: false,
-  },
-  {
-    id: "10",
-    badge: "Physical",
-    badgeColor: "physical",
-    name: "Takoradi Physio Hub",
-    location: "Takoradi",
-    phone: "+233 30 000 0001",
-    description: "Physiotherapy and mobility support services.",
-    featured: false,
-  },
-  {
-    id: "11",
-    badge: "Visual",
-    badgeColor: "visual",
-    name: "Braille Ghana",
-    location: "Accra",
-    phone: "+233 30 000 0001",
-    description: "Braille learning resources and visual impairment support.",
-    featured: false,
-  },
-  {
-    id: "12",
-    badge: "Hearing",
-    badgeColor: "hearing",
-    name: "Sign Language Centre",
-    location: "Kumasi",
-    phone: "+233 30 000 0001",
-    description: "Sign language classes and deaf community resources.",
-    featured: false,
-  },
-];
-
-// ─── Derived exports — import these directly instead of filtering every time ──
-
-// The 4 featured services shown on the HomePage
-export const FEATURED_SERVICES = ALL_SERVICES.filter((s) => s.featured);
-
 // ─── Filter options ───────────────────────────────────────────────────────────
 
 export const STATS = [
@@ -150,26 +6,97 @@ export const STATS = [
   { value: "6", label: "Disability types" },
 ];
 
-export const DISABILITY_TYPES = [
-  "All types",
-  "Physical Disability",
-  "Visual Impairment",
-  "Hearing Impairment",
+export const CATEGORIES = [
+  "Rehabilitation",
   "Mental Health",
-  "Speech & Language",
-  "Intellectual Disability",
+  "Visual Support",
+  "Hearing Support",
+  "Speech Therapy",
+  "Legal Aid",
+  "Educational Support",
+  "Community Support",
+  "Medical Care",
+  "Assistive Technology",
+  "Counselling",
+  "Other",
+];
+
+export const DISABILITY_TYPES = [
+  "Physical",
+  "Visual",
+  "Intellectual",
+  "Hearing",
+  "Mental Health",
+  "Speech",
+];
+
+export const TARGET_GROUPS = [
+  "Children (under 18)",
+  "Adults (18–64)",
+  "Elderly (65+)",
+  "All ages",
+  "Women only",
+  "Men only",
 ];
 
 export const REGIONS = [
-  "All regions",
-  "Accra",
-  "Kumasi",
-  "Tamale",
-  "Cape Coast",
-  "Takoradi",
-  "Ho",
-  "Koforidua",
-  "Sunyani",
-  "Wa",
-  "Bolgatanga",
+  "Greater Accra",
+  "Ashanti",
+  "Western",
+  "Central",
+  "Eastern",
+  "Volta",
+  "Northern",
+  "Upper East",
+  "Upper West",
+  "Brong-Ahafo",
+  "Savannah",
+  "Bono East",
+  "Ahafo",
+  "Western North",
+  "Oti",
+  "North East",
 ];
+
+// Maps disability type label → badge color key (used when building the payload)
+export const BADGE_COLOR_MAP = {
+  Physical: "physical",
+  Visual: "visual",
+  Hearing: "hearing",
+  "Mental Health": "mental",
+  Speech: "speech",
+  Intellectual: "intellectual",
+};
+
+// ─── Character / length limits ────────────────────────────────────────────────
+
+export const LIMITS = {
+  SERVICE_NAME_MAX: 100,
+  SHORT_DESCRIPTION_MAX: 150,
+  SHORT_DESCRIPTION_MIN: 50,
+  LONG_DESCRIPTION_MAX: 3000,
+  ABOUT_MAX: 3000, // alias used in the Mongoose model
+};
+
+// ─── Phone validation ─────────────────────────────────────────────────────────
+// Local format  : exactly 10 digits starting with 0  → e.g. 0501235683
+// Int'l format  : + followed by country code (1-3 digits) then a space then
+//                 9 digits                             → e.g. +233 501235683
+
+export const PHONE_REGEX = /^(?:0\d{9}|\+\d{1,3} \d{9})$/;
+
+export const PHONE_HINT =
+  "Use local format (0XXXXXXXXX) or international format (+233 XXXXXXXXX).";
+
+// ─── Multi-step form steps metadata ──────────────────────────────────────────
+
+export const STEPS = [
+  { number: 1, label: "Basic Info" },
+  { number: 2, label: "Service Details" },
+  { number: 3, label: "Location" },
+  { number: 4, label: "Review & Submit" },
+];
+
+// Default map center / zoom for Ghana
+export const GHANA_CENTER = [7.9465, -1.0232];
+export const DEFAULT_ZOOM = 7;

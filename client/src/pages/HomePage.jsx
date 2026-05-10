@@ -1,20 +1,56 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../utils/cn";
-import {
-  STATS,
-  DISABILITY_TYPES,
-  REGIONS,
-  FEATURED_SERVICES,
-} from "../constants/servicesData";
 import { ServiceCard } from "../components/services/ServiceCard";
 import { GhanaFlag } from "../assets/icons/GhanaFlag";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [stats, setStats] = useState([]);
+  const [disabilityTypes, setDisabilityTypes] = useState(["All types"]);
+  const [regions, setRegions] = useState(["All regions"]);
+  const [featured, setFeatured] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [search, setSearch] = useState("");
   const [type, setType] = useState("All types");
   const [region, setRegion] = useState("All regions");
+
+  // Fetch all dynamic data
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const [statsRes, constantsRes, featuredRes] = await Promise.all([
+          fetch("/api/stats"),
+          fetch("/api/constants"),
+          fetch("/api/services/featured?limit=3"),
+        ]);
+
+        const statsData = await statsRes.json();
+        const constantsData = await constantsRes.json();
+        const featuredData = await featuredRes.json();
+
+        // Format stats for display
+        setStats([
+          { value: statsData.totalServices, label: "Services" },
+          { value: statsData.totalRegions, label: "Regions" },
+          { value: statsData.totalCities, label: "Cities" },
+        ]);
+
+        // Add "All types" and "All regions" as first options
+        setDisabilityTypes(["All types", ...constantsData.disabilityTypes]);
+        setRegions(["All regions", ...constantsData.regions]);
+
+        setFeatured(featuredData.services || []);
+      } catch (err) {
+        console.error("Failed to load home page data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -35,6 +71,14 @@ export default function HomePage() {
     "transition-colors duration-200",
   );
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 rounded-full border-4 animate-spin border-border border-t-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-(--color-bg) dark:bg-bg-dark transition-colors duration-300 min-h-screen">
       {/* ── HERO ──────────────────────────────────────────────────────── */}
@@ -42,7 +86,6 @@ export default function HomePage() {
         aria-labelledby="hero-heading"
         className="flex flex-col items-center text-center px-6 pt-20 pb-16 max-w-7xl mx-auto"
       >
-        {/* Decorative pill — aria-hidden, no information value */}
         <div
           aria-hidden="true"
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 border border-border dark:border-border-dark text-xs font-bold tracking-widest uppercase text-text-secondary dark:text-text-secondary-dark bg-surface dark:bg-surface-dark"
@@ -89,17 +132,12 @@ export default function HomePage() {
       </section>
 
       {/* ── STATS ─────────────────────────────────────────────────────── */}
-      {/*
-        <dl> is the correct semantic element for key-value pairs.
-        <dt> = term/label, <dd> = value — order matters for screen readers.
-        sr-only on <dt> keeps it clean visually while remaining accessible.
-      */}
       <section
         aria-label="Service directory statistics"
         className="px-6 pb-16 max-w-7xl mx-auto w-full"
       >
         <dl className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x rounded-2xl border border-border dark:border-border-dark bg-(--color-bg) dark:bg-surface-dark overflow-hidden">
-          {STATS.map(({ value, label }) => (
+          {stats.map(({ value, label }) => (
             <div key={label} className="flex flex-col items-center py-10 px-4">
               <dt className="sr-only">{label}</dt>
               <dd className="text-5xl font-black text-primary dark:text-primary-dark mb-2">
@@ -117,11 +155,6 @@ export default function HomePage() {
       </section>
 
       {/* ── SEARCH ────────────────────────────────────────────────────── */}
-      {/*
-        role="search" creates a distinct ARIA landmark (WCAG 2.4.1).
-        Every input has a <label> — sr-only keeps layout clean (WCAG 1.3.1).
-        aria-describedby links the hint text to the keyword input (WCAG 1.3.1).
-      */}
       <section
         aria-labelledby="search-heading"
         className="px-6 pb-16 max-w-7xl mx-auto w-full"
@@ -140,7 +173,6 @@ export default function HomePage() {
             onSubmit={handleSearch}
             className="flex flex-col lg:flex-row gap-4"
           >
-            {/* Keyword */}
             <div className="flex-1">
               <label htmlFor="search-keyword" className="sr-only">
                 Search by keyword
@@ -156,7 +188,6 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Disability type */}
             <div>
               <label htmlFor="search-type" className="sr-only">
                 Filter by disability type
@@ -167,7 +198,7 @@ export default function HomePage() {
                 onChange={(e) => setType(e.target.value)}
                 className={cn(inputBase, "lg:w-64")}
               >
-                {DISABILITY_TYPES.map((t) => (
+                {disabilityTypes.map((t) => (
                   <option key={t} value={t}>
                     {t}
                   </option>
@@ -175,7 +206,6 @@ export default function HomePage() {
               </select>
             </div>
 
-            {/* Region */}
             <div>
               <label htmlFor="search-region" className="sr-only">
                 Filter by region
@@ -186,7 +216,7 @@ export default function HomePage() {
                 onChange={(e) => setRegion(e.target.value)}
                 className={cn(inputBase, "lg:w-48")}
               >
-                {REGIONS.map((r) => (
+                {regions.map((r) => (
                   <option key={r} value={r}>
                     {r}
                   </option>
@@ -203,7 +233,6 @@ export default function HomePage() {
             </button>
           </form>
 
-          {/* Hint linked to keyword input via aria-describedby */}
           <p
             id="search-hint"
             className="mt-3 text-xs text-text-muted dark:text-text-muted-dark"
@@ -236,15 +265,14 @@ export default function HomePage() {
           </button>
         </div>
 
-        {/* role="list" restores semantics stripped by Tailwind list-none (VoiceOver fix) */}
         <ul
           role="list"
           aria-label="Featured disability support services"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {FEATURED_SERVICES.map((s) => (
-            <li key={s.id}>
-              <ServiceCard service={s} />
+          {featured.map((service) => (
+            <li key={service._id}>
+              <ServiceCard service={service} />
             </li>
           ))}
         </ul>

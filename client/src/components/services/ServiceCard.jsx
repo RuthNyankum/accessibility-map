@@ -2,14 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../../utils/cn";
 import { Badge } from "../common/Badge";
 import { CardReadButton } from "../common/CardReadButton";
+import { FaMapMarkerAlt, FaPhone, FaArrowRight, FaStar } from "react-icons/fa";
 
-/**
- * ServiceCard — single card used on both HomePage and ServicesPage.
- *
- * Props:
- *   service   — Service object
- *   listView  — boolean — compact horizontal layout for list view toggle
- */
 export function ServiceCard({ service, listView = false }) {
   const navigate = useNavigate();
 
@@ -35,12 +29,19 @@ export function ServiceCard({ service, listView = false }) {
         listView ? "flex-row items-start gap-5 p-5" : "flex-col gap-3 p-6",
       )}
     >
-      {/* ── Left / main column ──────────────────────────────────── */}
       <div className={cn("flex flex-col gap-3", listView && "flex-1 min-w-0")}>
-        {/* Badge */}
-        <Badge type={service.badgeColor} label={service.badge} />
+        <div className="flex items-center justify-between">
+          <Badge type={service.badgeColor} label={service.badge} />
+          {service.featured && (
+            <div className="flex items-center gap-1 text-amber-500">
+              <FaStar className="w-3 h-3" aria-hidden="true" />
+              <span className="text-xs font-bold uppercase tracking-wide">
+                Featured
+              </span>
+            </div>
+          )}
+        </div>
 
-        {/* Name */}
         <h3
           className={cn(
             "font-bold leading-snug",
@@ -51,18 +52,17 @@ export function ServiceCard({ service, listView = false }) {
           {service.name}
         </h3>
 
-        {/* Location */}
+        {/* rest of the component unchanged */}
         <p
           className={cn(
             "flex items-center gap-2 text-sm",
             "text-text-secondary dark:text-text-secondary-dark",
           )}
         >
-          <span aria-hidden="true">📍</span>
+          <FaMapMarkerAlt aria-hidden="true" />
           <span>{service.location}</span>
         </p>
 
-        {/* Description — the short paragraph shown in the screenshot */}
         {service.description && (
           <p
             className={cn(
@@ -76,17 +76,15 @@ export function ServiceCard({ service, listView = false }) {
         )}
       </div>
 
-      {/* ── Right / action column ────────────────────────────────── */}
+      {/* right column remains the same */}
       <div
         className={cn("flex flex-col gap-3", listView && "shrink-0 items-end")}
       >
-        {/* Divider above phone */}
         <div
           aria-hidden="true"
           className="h-px w-full bg-border dark:bg-border-dark"
         />
 
-        {/* Phone */}
         {service.phone && (
           <p
             className={cn(
@@ -94,7 +92,7 @@ export function ServiceCard({ service, listView = false }) {
               "text-text-secondary dark:text-text-secondary-dark",
             )}
           >
-            <span aria-hidden="true">📞</span>
+            <FaPhone aria-hidden="true" />
             <a
               href={`tel:${service.phone.replace(/\s/g, "")}`}
               aria-label={`Call ${service.name} at ${service.phone}`}
@@ -110,19 +108,16 @@ export function ServiceCard({ service, listView = false }) {
           </p>
         )}
 
-        {/* Divider above actions */}
         <div
           aria-hidden="true"
           className="h-px w-full bg-border dark:bg-border-dark"
         />
 
-        {/* Actions row — Read + Details */}
         <div className="flex items-center gap-3">
-          <CardReadButton text={cardReadText} cardId={service.id} />
-
+          <CardReadButton text={cardReadText} cardId={service._id} />
           <button
             type="button"
-            onClick={() => navigate(`/services/${service.id}`)}
+            onClick={() => navigate(`/services/${service._id}`)}
             aria-label={`View full details for ${service.name}`}
             className={cn(
               "inline-flex items-center gap-1 text-sm font-bold min-h-0",
@@ -132,7 +127,7 @@ export function ServiceCard({ service, listView = false }) {
               "dark:focus-visible:ring-focus-dark rounded-sm",
             )}
           >
-            Details <span aria-hidden="true">→</span>
+            Details <FaArrowRight className="text-xs" aria-hidden="true" />
           </button>
         </div>
       </div>
