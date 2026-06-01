@@ -175,7 +175,8 @@ export default function Navbar() {
     <header
       role="banner"
       className={cn(
-        "sticky top-0 z-50",
+        // "sticky top-0 z-50",
+        "sticky top-0 z-[2000]",
         "bg-(--color-bg) dark:bg-bg-dark",
         "border-b border-border dark:border-border-dark",
         "transition-colors duration-300",

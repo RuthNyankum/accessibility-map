@@ -39,9 +39,14 @@ export const getServices = async (req, res, next) => {
 // Public — returns featured approved services for the home page
 export const getFeaturedServices = async (req, res, next) => {
   try {
-    const services = await Service.find({ status: "approved", featured: true })
+    const limit = Number(req.query.limit) || 4;
+
+    const services = await Service.find({
+      status: "approved",
+      featured: true,
+    })
       .sort({ createdAt: -1 })
-      .limit(4)
+      .limit(limit)
       .select("-__v -submittedBy");
 
     res.json({ services });

@@ -19,6 +19,7 @@ import AdminOverviewPage from "../pages/admin/AdminOverviewPage";
 import AdminPendingPage from "../pages/admin/AdminPendingPage";
 import AdminServicesPage from "../pages/admin/AdminServicesPage";
 import AdminUsersPage from "../pages/admin/AdminUsersPage";
+import AboutPage from "../pages/AboutPage";
 
 export default function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ export default function AppRoutes() {
         <Route path="/" element={<HomePage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:id" element={<ServiceDetailsPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/map" element={<MapPage />} />
         {/* Protected routes (require login) */}
         <Route element={<ProtectedRoute />}>

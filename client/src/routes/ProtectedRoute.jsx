@@ -16,7 +16,7 @@ export default function ProtectedRoute() {
       }
 
       try {
-        await API.get("/api/auth/me");
+        await API.get("/auth/me");
 
         setStatus("ok");
       } catch {

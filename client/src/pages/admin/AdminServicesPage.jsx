@@ -190,7 +190,7 @@ export default function AdminServicesPage() {
 
     const fetchServices = async () => {
       try {
-        const res = await API.get("/api/services/admin/all");
+        const res = await API.get("/services/admin/all");
         setServices(res.data.services || []);
       } catch (err) {
         console.error("Failed to fetch services:", err);
@@ -222,7 +222,7 @@ export default function AdminServicesPage() {
 
   const handleDelete = async (id) => {
     try {
-      await API.delete(`/api/services/${id}`);
+      await API.delete(`/services/${id}`);
 
       setServices((prev) => prev.filter((s) => s._id !== id));
       setDeleteConfirm(null);
@@ -241,7 +241,7 @@ export default function AdminServicesPage() {
 
       const newFeatured = !service.featured;
 
-      const res = await API.patch(`/api/services/${id}/feature`, {
+      const res = await API.patch(`/services/${id}/feature`, {
         featured: newFeatured,
       });
 

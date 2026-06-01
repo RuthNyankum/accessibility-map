@@ -85,7 +85,7 @@ export default function AdminPendingPage() {
           Authorization: `Bearer ${token}`,
         };
 
-        const res = await API.get("/api/services/admin/all?status=pending", {
+        const res = await API.get("/services/admin/all?status=pending", {
           headers,
         });
 
@@ -110,7 +110,7 @@ export default function AdminPendingPage() {
     setConfirm(null);
 
     try {
-      await API.patch(`/api/services/${service._id}/status`, {
+      await API.patch(`/services/${service._id}/status`, {
         status: action === "approve" ? "approved" : "rejected",
       });
 

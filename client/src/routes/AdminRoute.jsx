@@ -16,7 +16,7 @@ export default function AdminRoute() {
       }
 
       try {
-        const res = await API.get("/api/auth/me");
+        const res = await API.get("/auth/me");
 
         const user = res.data.user;
 

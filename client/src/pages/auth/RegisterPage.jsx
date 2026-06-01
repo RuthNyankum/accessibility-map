@@ -48,7 +48,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       // Use Axios instance (already imported)
-      const res = await API.post("/api/auth/register", {
+      const res = await API.post("/auth/register", {
         name: form.name,
         email: form.email,
         password: form.password,

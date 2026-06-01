@@ -22,9 +22,9 @@ export default function HomePage() {
       try {
         // Use Axios for all three requests
         const [statsRes, constantsRes, featuredRes] = await Promise.all([
-          API.get("/api/stats"),
-          API.get("/api/constants"),
-          API.get("/api/services/featured?limit=3"),
+          API.get("/stats"),
+          API.get("/constants"),
+          API.get("/services/featured?limit=6"),
         ]);
 
         const statsData = statsRes.data;

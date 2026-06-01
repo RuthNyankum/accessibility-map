@@ -44,7 +44,7 @@ export default function ServiceDetailsPage() {
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
         // 1. Fetch main service
-        const res = await API.get(`/api/services/${id}`, { headers });
+        const res = await API.get(`/services/${id}`, { headers });
 
         const mainService = res.data.service;
         setService(mainService);
@@ -56,7 +56,7 @@ export default function ServiceDetailsPage() {
 
         if (mainService.category) {
           const similarRes = await API.get(
-            `/api/services?category=${encodeURIComponent(mainService.category)}&limit=4`,
+            `/services?category=${encodeURIComponent(mainService.category)}&limit=4`,
             { headers },
           );
 
@@ -67,7 +67,7 @@ export default function ServiceDetailsPage() {
 
         // 3. If no similar services found, get other services
         if (similarList.length === 0) {
-          const otherRes = await API.get(`/api/services?limit=3`, { headers });
+          const otherRes = await API.get(`/services?limit=3`, { headers });
 
           similarList = (otherRes.data.services || []).filter(
             (s) => s._id !== mainService._id,

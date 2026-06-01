@@ -1262,14 +1262,39 @@ export default function AddServicePage() {
   const handleSubmit = async () => {
     setServerError("");
     setLoading(true);
+
     const primaryType = step1.disabilityTypes[0] || "Physical";
+    const badgeColorMap = {
+      Physical: "physical",
+      Visual: "visual",
+      Hearing: "hearing",
+      "Mental Health": "mental",
+      Speech: "speech",
+      Intellectual: "intellectual",
+    };
+
     const payload = {
-      /* ... same as before ... */
+      name: step1.name.trim(),
+      badge: primaryType,
+      badgeColor: badgeColorMap[primaryType],
+      tags: step1.disabilityTypes,
+      location: step3.city.trim(),
+      region: step3.region,
+      address: step3.address.trim() || step3.city.trim(),
+      phone: step2.phone.trim(),
+      email: step2.email.trim(),
+      website: step2.website.trim(),
+      hours: step2.hours.trim(),
+      description: step2.description.trim(),
+      about: step2.about.trim(),
+      coordinates:
+        step3.lat && step3.lng
+          ? { lat: parseFloat(step3.lat), lng: parseFloat(step3.lng) }
+          : undefined,
     };
 
     try {
-      // Axios automatically uses baseURL and adds JSON content-type
-      const res = await API.post("/api/services", payload);
+      await API.post("/services", payload);
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {

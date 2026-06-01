@@ -38,7 +38,7 @@ export default function LoginPage() {
 
     try {
       //  Use Axios instance
-      const res = await API.post("/api/auth/login", form);
+      const res = await API.post("/auth/login", form);
       const data = res.data;
 
       localStorage.setItem("abilitymap-token", data.token);

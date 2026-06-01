@@ -19,7 +19,7 @@ function UserServicesModal({ user, onClose }) {
   useEffect(() => {
     const fetchUserServices = async () => {
       try {
-        const res = await API.get("/api/services/admin/all");
+        const res = await API.get("/services/admin/all");
 
         const all = res.data.services || [];
 
@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
 
     const fetchUsers = async () => {
       try {
-        const res = await API.get("/api/users");
+        const res = await API.get("/users");
         setUsers(res.data.users || []);
       } catch (err) {
         console.error("Failed to fetch users:", err);
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
 
       const newRole = user.role === "admin" ? "user" : "admin";
 
-      await API.patch(`/api/users/${id}/role`, {
+      await API.patch(`/users/${id}/role`, {
         role: newRole,
       });
 
@@ -224,7 +224,7 @@ export default function AdminUsersPage() {
 
   const handleDelete = async (id) => {
     try {
-      await API.delete(`/api/users/${id}`);
+      await API.delete(`/users/${id}`);
 
       setUsers((p) => p.filter((u) => u._id !== id));
       setDeleteConfirm(null);

@@ -34,7 +34,7 @@ export default function ServicesPage() {
     document.title = "All Services — AbilityMap Ghana";
     const fetchServices = async () => {
       try {
-        const res = await API.get("/api/services?limit=100");
+        const res = await API.get("/services?limit=100");
         setAllServices(res.data.services || []);
       } catch (err) {
         console.error(err);

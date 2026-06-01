@@ -78,8 +78,8 @@ export default function AdminOverviewPage() {
 
         // 1. Fetch in parallel using Axios
         const [svcRes, usersRes] = await Promise.all([
-          API.get("/api/services/admin/all", { headers }),
-          API.get("/api/users", { headers }),
+          API.get("/services/admin/all", { headers }),
+          API.get("/users", { headers }),
         ]);
 
         const allServices = svcRes.data.services || [];
