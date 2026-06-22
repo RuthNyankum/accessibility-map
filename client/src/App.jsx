@@ -1,14 +1,14 @@
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeProvider } from "./context/ThemeProvider";
 import { AccessibilityProvider } from "./context/AccessibilityContext";
-import AppRoutes from "./routes/AppRoutes";
+import AppRoute from "./routes/AppRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <ThemeProvider>
         <AccessibilityProvider>
-          <AppRoutes />
+          <AppRoute />
         </AccessibilityProvider>
       </ThemeProvider>
     </BrowserRouter>

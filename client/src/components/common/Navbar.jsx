@@ -105,7 +105,7 @@ export default function Navbar() {
           "inline-flex items-center gap-1.5 px-5 rounded-lg text-[15px] font-bold no-underline min-h-[44px]",
           "bg-primary text-(--color-primary-fg)",
           "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
-          "hover:bg-primary-hover dark:hover:opacity-90",
+          "hover:bg-primary-hover dark:hover:opacity-90 dark:hover:text-white",
           "transition-colors duration-200",
         )}
       >

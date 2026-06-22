@@ -10,15 +10,11 @@ export default defineConfig([
   {
     files: ["**/*.{js,jsx}"],
 
-    plugins: {
-      "jsx-a11y": jsxA11y,
-    },
-
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
-      jsxA11y.flatConfigs.recommended,
+      jsxA11y.flatConfigs.recommended, 
     ],
 
     languageOptions: {

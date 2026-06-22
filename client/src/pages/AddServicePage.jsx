@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
@@ -51,6 +51,32 @@ const labelBase = cn(
   "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
 );
 
+// ─── Field map (shared between ErrorSummary and handleNext) ──────────────────
+
+const FIELD_MAP = {
+  name: "s1-name",
+  category: "s1-category",
+  disabilityTypes: "s1-types-label",
+  phone: "s2-phone",
+  email: "s2-email",
+  description: "s2-description",
+  about: "s2-about",
+  region: "s3-region",
+  city: "s3-city",
+};
+
+const FIELD_LABELS = {
+  name: "Service name",
+  category: "Service category",
+  disabilityTypes: "Disability types",
+  phone: "Phone number",
+  email: "Email address",
+  description: "Short description",
+  about: "Full description",
+  region: "Region",
+  city: "City / Town",
+};
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function FieldError({ id, message }) {
@@ -63,6 +89,64 @@ function FieldError({ id, message }) {
     >
       {message}
     </p>
+  );
+}
+
+// ─── Error Summary (WCAG 4.1.3) ──────────────────────────────────────────────
+
+function ErrorSummary({ errors }) {
+  const summaryRef = useRef(null);
+  const entries = Object.entries(errors).filter(([, msg]) => msg);
+
+  // Move focus into the summary box whenever errors appear/update
+  useEffect(() => {
+    if (entries.length > 0) {
+      summaryRef.current?.focus();
+    }
+  }, [errors]);
+
+  if (entries.length === 0) return null;
+
+  return (
+    <div
+      ref={summaryRef}
+      role="alert"
+      aria-labelledby="err-summary-title"
+      tabIndex={-1}
+      className={cn(
+        "mb-6 p-4 rounded-xl border outline-none",
+        "bg-danger-bg border-(--color-danger,#dc2626)",
+        "dark:bg-[#2d1212] dark:border-(--color-danger-dark,#f87171)",
+      )}
+    >
+      <p
+        id="err-summary-title"
+        className="text-sm font-black mb-3 text-danger dark:text-danger-dark"
+      >
+        {entries.length} {entries.length === 1 ? "error needs" : "errors need"}{" "}
+        fixing:
+      </p>
+      <ul className="flex flex-col gap-1.5 list-none p-0 m-0">
+        {entries.map(([field, message]) => (
+          <li key={field}>
+            <a
+              href={`#${FIELD_MAP[field]}`}
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById(FIELD_MAP[field])?.focus();
+              }}
+              className={cn(
+                "text-sm font-bold underline underline-offset-2",
+                "text-danger dark:text-danger-dark",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger rounded-sm",
+              )}
+            >
+              {FIELD_LABELS[field] || field}: {message}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -234,8 +318,8 @@ function NavButtons({
         disabled={loading}
         className={cn(
           "px-8 py-3 rounded-xl font-bold text-sm min-h-[52px]",
-          "bg-primary text-(--color-primary-fg)",
-          "dark:bg-primary-dark dark:te.xt-[var(--color-primary-dark-fg)]",
+          "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
+          "hover:bg-primary-hover hover:text-white dark:hover:opacity-90 dark:hover:text-white",
           newLocal,
           "disabled:opacity-50 disabled:cursor-not-allowed",
           "transition-colors duration-200",
@@ -261,6 +345,8 @@ function Step1({ data, onChange, errors }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <ErrorSummary errors={errors} />
+
       <StepHeader
         step={1}
         title="Basic Info"
@@ -276,15 +362,25 @@ function Step1({ data, onChange, errors }) {
             *
           </span>
         </label>
+        <p
+          id="s1-name-hint"
+          className="text-xs text-text-muted dark:text-text-muted-dark mt-0.5 mb-1"
+        >
+          Required · {LIMITS.SERVICE_NAME_MIN}–{LIMITS.SERVICE_NAME_MAX}{" "}
+          characters
+        </p>
         <input
           id="s1-name"
           type="text"
           placeholder="e.g. Accra Rehab Center"
           value={data.name}
           onChange={(e) => onChange("name", e.target.value)}
+          minLength={LIMITS.SERVICE_NAME_MIN}
           maxLength={LIMITS.SERVICE_NAME_MAX}
           aria-required="true"
-          aria-describedby={errors.name ? "s1-name-err" : undefined}
+          aria-describedby={
+            errors.name ? "s1-name-hint s1-name-err" : "s1-name-hint"
+          }
           aria-invalid={!!errors.name}
           className={inputBase(errors.name)}
         />
@@ -389,6 +485,8 @@ function Step1({ data, onChange, errors }) {
 function Step2({ data, onChange, errors }) {
   return (
     <div className="flex flex-col gap-6">
+      <ErrorSummary errors={errors} />
+
       <StepHeader
         step={2}
         title="Service Details"
@@ -412,7 +510,9 @@ function Step2({ data, onChange, errors }) {
             value={data.phone}
             onChange={(e) => onChange("phone", e.target.value)}
             aria-required="true"
-            aria-describedby={errors.phone ? "s2-phone-err" : "s2-phone-hint"}
+            aria-describedby={
+              errors.phone ? "s2-phone-hint s2-phone-err" : "s2-phone-hint"
+            }
             aria-invalid={!!errors.phone}
             className={inputBase(errors.phone)}
           />
@@ -427,7 +527,10 @@ function Step2({ data, onChange, errors }) {
 
         <div>
           <label htmlFor="s2-email" className={labelBase}>
-            Email Address
+            Email Address{" "}
+            <span className="text-danger" aria-hidden="true">
+              *
+            </span>
           </label>
           <input
             id="s2-email"
@@ -435,8 +538,20 @@ function Step2({ data, onChange, errors }) {
             placeholder="info@example.com"
             value={data.email}
             onChange={(e) => onChange("email", e.target.value)}
-            className={inputBase(false)}
+            aria-required="true"
+            aria-describedby={
+              errors.email ? "s2-email-hint s2-email-err" : "s2-email-hint"
+            }
+            aria-invalid={!!errors.email}
+            className={inputBase(errors.email)}
           />
+          <p
+            id="s2-email-hint"
+            className="text-xs mt-1 text-text-muted dark:text-text-muted-dark"
+          >
+            Must be a valid email address e.g. info@example.com
+          </p>
+          <FieldError id="s2-email-err" message={errors.email} />
         </div>
       </div>
 
@@ -487,7 +602,9 @@ function Step2({ data, onChange, errors }) {
           onChange={(e) => onChange("description", e.target.value)}
           maxLength={LIMITS.SHORT_DESCRIPTION_MAX}
           aria-required="true"
-          aria-describedby={errors.description ? "s2-desc-err" : "s2-desc-hint"}
+          aria-describedby={
+            errors.description ? "s2-desc-hint s2-desc-err" : "s2-desc-hint"
+          }
           aria-invalid={!!errors.description}
           className={cn(
             inputBase(errors.description),
@@ -639,6 +756,8 @@ function Step3({ data, onChange, errors }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <ErrorSummary errors={errors} />
+
       <StepHeader
         step={3}
         title="Service Location"
@@ -1017,7 +1136,7 @@ function Step4({ data, onEdit, errors, serverError, loading, onSubmit }) {
             "flex-1 py-3 rounded-xl font-bold text-sm min-h-[52px]",
             "bg-primary text-(--color-primary-fg)",
             "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
-            "hover:bg-primary-hover dark:hover:opacity-90",
+            "hover:bg-primary-hover dark:hover:opacity-90 dark:hover:text-white",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "transition-colors duration-200",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus",
@@ -1173,7 +1292,11 @@ export default function AddServicePage() {
 
   const validateStep1 = () => {
     const e = {};
-    if (!step1.name.trim()) e.name = "Service name is required";
+    if (!step1.name.trim()) {
+      e.name = "Service name is required";
+    } else if (step1.name.trim().length < LIMITS.SERVICE_NAME_MIN) {
+      e.name = `Service name must be at least ${LIMITS.SERVICE_NAME_MIN} characters`;
+    }
     if (!step1.category) e.category = "Please select a category";
     if (step1.disabilityTypes.length === 0)
       e.disabilityTypes = "Select at least one disability type";
@@ -1183,14 +1306,18 @@ export default function AddServicePage() {
   const validateStep2 = () => {
     const e = {};
 
-    // Phone validation
     if (!step2.phone.trim()) {
       e.phone = "Phone number is required";
     } else if (!PHONE_REGEX.test(step2.phone.trim())) {
       e.phone = `Invalid format. ${PHONE_HINT}`;
     }
 
-    // Short description validation
+    if (!step2.email.trim()) {
+      e.email = "Email address is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(step2.email.trim())) {
+      e.email = "Enter a valid email address e.g. info@example.com";
+    }
+
     if (!step2.description.trim()) {
       e.description = "Short description is required";
     } else if (step2.description.trim().length < LIMITS.SHORT_DESCRIPTION_MIN) {
@@ -1199,7 +1326,6 @@ export default function AddServicePage() {
       e.description = `Description cannot exceed ${LIMITS.SHORT_DESCRIPTION_MAX} characters`;
     }
 
-    // Full description (about) validation — optional but capped
     if (step2.about.length > LIMITS.LONG_DESCRIPTION_MAX) {
       e.about = `Full description cannot exceed ${LIMITS.LONG_DESCRIPTION_MAX} characters`;
     }
@@ -1224,18 +1350,9 @@ export default function AddServicePage() {
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      // Focus the first broken field (ErrorSummary also moves focus to itself)
       const firstKey = Object.keys(errs)[0];
-      const fieldMap = {
-        name: "s1-name",
-        category: "s1-category",
-        disabilityTypes: "s1-types-label",
-        phone: "s2-phone",
-        description: "s2-description",
-        about: "s2-about",
-        region: "s3-region",
-        city: "s3-city",
-      };
-      document.getElementById(fieldMap[firstKey])?.focus();
+      document.getElementById(FIELD_MAP[firstKey])?.focus();
       return;
     }
 
@@ -1382,11 +1499,7 @@ export default function AddServicePage() {
               completedSteps={completedSteps}
             />
 
-            <main
-              id="main-content"
-              className="flex-1 min-w-0"
-              aria-label="Add service form"
-            >
+            <main className="flex-1 min-w-0" aria-label="Add service form">
               {currentStep === 1 && (
                 <>
                   <Step1 data={step1} onChange={updateStep1} errors={errors} />

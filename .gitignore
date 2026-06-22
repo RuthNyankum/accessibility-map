@@ -1,2 +1,4 @@
 # Ignore root todo file
 TODO
+
+node_modules/

@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import { cn } from "../utils/cn";
-import AccessibilityBar from "../components/common/AccessibilityBar";
+import AccessibilityWidget from "../components/common/Accessibilitywidget";
 
 /**
  * MainLayout accessibility notes:
@@ -76,7 +76,8 @@ export default function MainLayout() {
         className="sr-only"
       />
 
-      <AccessibilityBar />
+      {/* <AccessibilityBar /> */}
+      <AccessibilityWidget />
       <Navbar />
 
       {/* ── Main content (WCAG 2.4.1, 2.4.3) ───────────────────

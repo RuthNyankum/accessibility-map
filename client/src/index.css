@@ -2,11 +2,6 @@
 
 @import "tailwindcss";
 
-/*
- * Tailwind v4: enable class-based dark mode.
- * This tells Tailwind that dark: variants activate when
- * the "dark" class is present on <html> (set by ThemeContext).
- */
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -120,7 +115,6 @@
     line-height: 1.2;
   }
 
-  /* Minimum 44×44px touch target on all interactive elements (WCAG 2.5.5) */
   button,
   a,
   input,
@@ -130,7 +124,6 @@
     font-family: var(--font-body);
   }
 
-  /* Visible focus ring on every interactive element (WCAG 2.4.7) */
   :focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 3px;
@@ -140,7 +133,6 @@
     outline-color: var(--color-focus-dark);
   }
 
-  /* Skip link — visually hidden until focused (WCAG 2.4.1) */
   .skip-link {
     position: absolute;
     top: -100%;
@@ -152,11 +144,6 @@
     top: 0;
   }
 
-  /*
-   * High contrast mode (WCAG 1.4.6 Enhanced Contrast)
-   * Applied via .high-contrast class on <html> by AccessibilityContext.
-   * Overrides palette to pure black/white for maximum legibility.
-   */
   .high-contrast {
     --color-text-primary: #000000;
     --color-text-secondary: #0a0a0a;
@@ -177,7 +164,6 @@
     --color-primary-dark: #6aff6a;
   }
 
-  /* Respect user OS preference for reduced motion (WCAG 2.3.3) */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -185,5 +171,14 @@
       transition: none !important;
       animation: none !important;
     }
+  }
+
+  /*
+ * Counter-scale the widget so it always renders at 16px equivalent,
+ * regardless of what --root-font-size is set to on <html>.
+ * e.g. if <html> is 20px, widget gets (16/20)rem = 0.8rem = 16px ✓
+ */
+  .a11y-widget-root {
+    font-size: calc(16 / var(--root-font-size, 16) * 1rem) !important;
   }
 }

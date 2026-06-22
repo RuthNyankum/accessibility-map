@@ -29,8 +29,14 @@ export function AccessibilityProvider({ children }) {
 
   const utteranceRef = useRef(null);
 
+  // useEffect(() => {
+  //   document.documentElement.style.fontSize = `${fontSize}px`;
+  //   localStorage.setItem("abilitymap-fontsize", fontSize);
+  // }, [fontSize]);
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSize}px`;
+    // Store the raw number so CSS can counter-scale the widget
+    document.documentElement.style.setProperty("--root-font-size", fontSize);
     localStorage.setItem("abilitymap-fontsize", fontSize);
   }, [fontSize]);
 

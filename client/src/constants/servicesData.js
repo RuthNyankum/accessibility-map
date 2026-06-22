@@ -71,6 +71,7 @@ export const BADGE_COLOR_MAP = {
 // ─── Character / length limits ────────────────────────────────────────────────
 
 export const LIMITS = {
+  SERVICE_NAME_MIN: 3,
   SERVICE_NAME_MAX: 100,
   SHORT_DESCRIPTION_MAX: 150,
   SHORT_DESCRIPTION_MIN: 50,
