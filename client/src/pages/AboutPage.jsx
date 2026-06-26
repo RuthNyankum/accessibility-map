@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "../utils/cn";
-
+import { FaSearch, FaMap } from "react-icons/fa";
 import { STATS, VALUES, HOW_IT_WORKS, CONTACT_ITEMS } from "../constants/about";
 import { GhanaFlag } from "../assets/icons/GhanaFlag";
 
@@ -27,7 +27,7 @@ export default function AboutPage() {
   return (
     <div
       className={cn(
-        "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
+        "bg-(--color-bg) dark:bg-bg-dark",
         "transition-colors duration-300",
       )}
     >
@@ -36,17 +36,17 @@ export default function AboutPage() {
         aria-labelledby="hero-heading"
         className={cn(
           "flex flex-col items-center text-center px-6 pt-16 pb-16",
-          "bg-[var(--color-surface)] dark:bg-[var(--color-surface-dark)]",
+          "bg-surface dark:bg-surface-dark",
         )}
       >
         <div
           aria-hidden="true"
           className={cn(
             "inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 border",
-            "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+            "border-border dark:border-border-dark",
             "text-xs font-black tracking-widest uppercase",
-            "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
-            "bg-[var(--color-surface)] dark:bg-[var(--color-surface-dark)]",
+            "text-text-secondary dark:text-text-secondary-dark",
+            "bg-surface dark:bg-surface-dark",
           )}
         >
           <GhanaFlag
@@ -61,7 +61,7 @@ export default function AboutPage() {
           id="hero-heading"
           className={cn(
             "text-3xl sm:text-4xl font-black max-w-xl mb-5 leading-tight",
-            "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+            "text-text-primary dark:text-text-primary-dark",
           )}
         >
           Building a More Accessible Ghana
@@ -70,7 +70,7 @@ export default function AboutPage() {
         <p
           className={cn(
             "text-base max-w-lg leading-relaxed",
-            "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+            "text-text-secondary dark:text-text-secondary-dark",
           )}
         >
           AbilityMap Ghana connects people with disabilities, caregivers, and
@@ -92,7 +92,7 @@ export default function AboutPage() {
               id="mission-heading"
               className={cn(
                 "text-2xl font-black mb-6",
-                "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+                "text-text-primary dark:text-text-primary-dark",
               )}
             >
               Why we built this
@@ -100,8 +100,8 @@ export default function AboutPage() {
 
             <div
               className={cn(
-                "flex flex-col gap-4 text-sm leading-relaxed",
-                "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+                "flex flex-col gap-4 text-l leading-relaxed",
+                "text-text-secondary dark:text-text-secondary-dark",
               )}
             >
               <p>
@@ -130,8 +130,8 @@ export default function AboutPage() {
             aria-label="Key statistics"
             className={cn(
               "w-full lg:w-72 shrink-0 rounded-2xl border p-6 flex flex-col gap-5",
-              "bg-[var(--color-surface)] dark:bg-[var(--color-surface-dark)]",
-              "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+              "bg-surface dark:bg-surface-dark",
+              "border-border dark:border-border-dark",
             )}
           >
             {STATS.map(({ value, label }) => (
@@ -139,13 +139,13 @@ export default function AboutPage() {
                 key={label}
                 className={cn(
                   "pb-5 border-b last:border-b-0 last:pb-0",
-                  "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+                  "border-border dark:border-border-dark",
                 )}
               >
                 <p
                   className={cn(
                     "text-4xl font-black mb-1",
-                    "text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]",
+                    "text-primary dark:text-primary-dark",
                   )}
                 >
                   {value}
@@ -154,7 +154,7 @@ export default function AboutPage() {
                 <p
                   className={cn(
                     "text-sm",
-                    "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+                    "text-text-secondary dark:text-text-secondary-dark",
                   )}
                 >
                   {label}
@@ -168,10 +168,7 @@ export default function AboutPage() {
       {/* ── VALUES ────────────────────────────────────────────────── */}
       <section
         aria-labelledby="values-heading"
-        className={cn(
-          "px-6 py-16",
-          "bg-[var(--color-surface)] dark:bg-[var(--color-surface-dark)]",
-        )}
+        className={cn("px-6 py-16", "bg-surface dark:bg-surface-dark")}
       >
         <div className="max-w-5xl mx-auto">
           <SectionLabel text="What We Stand For" />
@@ -180,7 +177,7 @@ export default function AboutPage() {
             id="values-heading"
             className={cn(
               "text-2xl font-black mb-2",
-              "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+              "text-text-primary dark:text-text-primary-dark",
             )}
           >
             Our values
@@ -189,7 +186,7 @@ export default function AboutPage() {
           <p
             className={cn(
               "text-sm mb-10",
-              "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+              "text-text-secondary dark:text-text-secondary-dark",
             )}
           >
             Everything we build is guided by these principles.
@@ -201,10 +198,10 @@ export default function AboutPage() {
                 key={title}
                 className={cn(
                   "flex flex-col gap-3 p-6 rounded-2xl border",
-                  "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
+                  "bg-(--color-bg) dark:bg-bg-dark",
                   "transition-colors duration-300 transition-all",
-                  "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-                  "hover:border-[var(--color-primary)] dark:hover:border-[var(--color-primary-dark)]",
+                  "border-border dark:border-border-dark",
+                  "hover:border-primary dark:hover:border-primary-dark",
                 )}
               >
                 <span className="text-2xl" aria-hidden="true">
@@ -214,7 +211,7 @@ export default function AboutPage() {
                 <h3
                   className={cn(
                     "font-black text-base",
-                    "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+                    "text-text-primary dark:text-text-primary-dark",
                   )}
                 >
                   {title}
@@ -223,7 +220,7 @@ export default function AboutPage() {
                 <p
                   className={cn(
                     "text-sm leading-relaxed",
-                    "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+                    "text-text-secondary dark:text-text-secondary-dark",
                   )}
                 >
                   {body}
@@ -245,7 +242,7 @@ export default function AboutPage() {
           id="how-heading"
           className={cn(
             "text-2xl font-black mb-2",
-            "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+            "text-text-primary dark:text-text-primary-dark",
           )}
         >
           Simple by design
@@ -254,7 +251,7 @@ export default function AboutPage() {
         <p
           className={cn(
             "text-sm mb-10",
-            "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+            "text-text-secondary dark:text-text-secondary-dark",
           )}
         >
           AbilityMap Ghana is straightforward to use for everyone — including
@@ -267,8 +264,8 @@ export default function AboutPage() {
               <div
                 className={cn(
                   "w-10 h-10 rounded-full flex items-center justify-center shrink-0 font-black text-base",
-                  "bg-[var(--color-primary)] text-[var(--color-primary-fg)]",
-                  "dark:bg-[var(--color-primary-dark)] dark:text-[var(--color-primary-dark-fg)]",
+                  "bg-primary text-(--color-primary-fg)",
+                  "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
                 )}
                 aria-hidden="true"
               >
@@ -279,7 +276,7 @@ export default function AboutPage() {
                 <h3
                   className={cn(
                     "font-black text-base mb-1",
-                    "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+                    "text-text-primary dark:text-text-primary-dark",
                   )}
                 >
                   {title}
@@ -288,7 +285,7 @@ export default function AboutPage() {
                 <p
                   className={cn(
                     "text-sm leading-relaxed",
-                    "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+                    "text-text-secondary dark:text-text-secondary-dark",
                   )}
                 >
                   {body}
@@ -302,10 +299,7 @@ export default function AboutPage() {
       {/* ── CONTACT ───────────────────────────────────────────────── */}
       <section
         aria-labelledby="contact-heading"
-        className={cn(
-          "px-6 py-16",
-          "bg-[var(--color-surface)] dark:bg-[var(--color-surface-dark)]",
-        )}
+        className={cn("px-6 py-16", "bg-surface dark:bg-surface-dark")}
       >
         <div className="max-w-3xl mx-auto">
           <SectionLabel text="Get in Touch" />
@@ -314,7 +308,7 @@ export default function AboutPage() {
             id="contact-heading"
             className={cn(
               "text-2xl font-black mb-2",
-              "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+              "text-text-primary dark:text-text-primary-dark",
             )}
           >
             Contact us
@@ -323,7 +317,7 @@ export default function AboutPage() {
           <p
             className={cn(
               "text-sm mb-8",
-              "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+              "text-text-secondary dark:text-text-secondary-dark",
             )}
           >
             Have a question, want to partner with us, or found incorrect
@@ -336,8 +330,8 @@ export default function AboutPage() {
                 key={label}
                 className={cn(
                   "flex items-start gap-4 p-5 rounded-2xl border",
-                  "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
-                  "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+                  "bg-(--color-bg) dark:bg-bg-dark",
+                  "border-border dark:border-border-dark",
                 )}
               >
                 <span className="text-xl shrink-0 mt-0.5" aria-hidden="true">
@@ -355,15 +349,15 @@ export default function AboutPage() {
                         href={href}
                         className={cn(
                           "text-sm font-bold break-all min-h-0",
-                          "text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]",
+                          "text-primary dark:text-primary-dark",
                           "hover:underline underline-offset-2",
-                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] rounded-sm",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded-sm",
                         )}
                       >
                         {value}
                       </a>
                     ) : (
-                      <span className="text-sm font-bold text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]">
+                      <span className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
                         {value}
                       </span>
                     )}
@@ -380,7 +374,7 @@ export default function AboutPage() {
         aria-labelledby="cta-heading"
         className={cn(
           "px-6 py-16 text-center",
-          "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
+          "bg-(--color-bg) dark:bg-bg-dark",
         )}
       >
         <div className="max-w-lg mx-auto">
@@ -388,7 +382,7 @@ export default function AboutPage() {
             id="cta-heading"
             className={cn(
               "text-2xl font-black mb-3",
-              "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+              "text-text-primary dark:text-text-primary-dark",
             )}
           >
             Ready to find support services?
@@ -397,7 +391,7 @@ export default function AboutPage() {
           <p
             className={cn(
               "text-sm mb-8 leading-relaxed",
-              "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+              "text-text-secondary dark:text-text-secondary-dark",
             )}
           >
             Browse over 120 disability support services across every region of
@@ -409,30 +403,20 @@ export default function AboutPage() {
               type="button"
               onClick={() => navigate("/services")}
               aria-label="Find disability support services"
-              className={cn(
-                "inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-sm min-h-[52px]",
-                "bg-[var(--color-primary)] text-[var(--color-primary-fg)]",
-                "dark:bg-[var(--color-primary-dark)] dark:text-[var(--color-primary-dark-fg)]",
-                "hover:bg-[var(--color-primary-hover)] dark:hover:opacity-90 transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]",
-              )}
+              className="inline-flex items-center gap-2 px-8 rounded-xl font-bold text-base min-h-[56px] cursor-pointer bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
             >
-              <span aria-hidden="true">🔍</span> Find Services
+              <FaSearch aria-hidden="true" />
+              Find Services
             </button>
 
             <button
               type="button"
               onClick={() => navigate("/map")}
-              aria-label="View services on the map"
-              className={cn(
-                "inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-sm min-h-[52px]",
-                "border-2 border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-                "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
-                "hover:bg-[var(--color-surface)] dark:hover:bg-[#2d3f5a] transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]",
-              )}
+              aria-label="View all services on a map"
+              className="inline-flex items-center gap-2 px-8 rounded-xl font-bold text-base min-h-[56px] cursor-pointer border-2 border-border dark:border-border-dark text-text-primary dark:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
             >
-              <span aria-hidden="true">🗺️</span> View on Map
+              <FaMap aria-hidden="true" />
+              View on Map
             </button>
           </div>
         </div>

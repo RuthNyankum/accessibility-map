@@ -116,7 +116,7 @@ export default function Navbar() {
         <button
           onClick={handleLogout}
           className={cn(
-            "inline-flex items-center gap-1.5 px-5 rounded-lg text-[15px] font-bold min-h-[44px]",
+            "inline-flex items-center gap-1.5 px-5 rounded-lg text-[15px] font-bold min-h-[44px] cursor-pointer",
             "bg-danger text-white",
             "hover:opacity-90 transition-colors duration-200",
           )}
@@ -157,7 +157,7 @@ export default function Navbar() {
           <button
             onClick={handleLogout}
             className={cn(
-              "w-full flex items-center justify-center gap-1.5 mt-2",
+              "w-full flex items-center justify-center gap-1.5 mt-2 cursor-pointer",
               "px-5 rounded-lg text-[15px] font-bold min-h-[44px]",
               "bg-danger text-white",
               "hover:opacity-90",
@@ -221,7 +221,10 @@ export default function Navbar() {
 
         {/* Desktop right side: Add a Service + conditional Logout */}
         <div className="flex items-center gap-3">
-          {renderDesktopAuthButtons()}
+          {/* Desktop only */}
+          <div className="hidden md:flex items-center gap-3">
+            {renderDesktopAuthButtons()}
+          </div>
 
           {/* Mobile hamburger */}
           <button

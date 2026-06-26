@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "../utils/cn";
 import { ServiceCard } from "../components/services/ServiceCard";
 import { GhanaFlag } from "../assets/icons/GhanaFlag";
+import { FaSearch, FaMap } from "react-icons/fa";
 import API from "../services/api";
 
 export default function HomePage() {
@@ -113,18 +114,20 @@ export default function HomePage() {
             type="button"
             onClick={() => navigate("/services")}
             aria-label="Find disability support services"
-            className="inline-flex items-center gap-2 px-8 rounded-xl font-bold text-base min-h-[56px] bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
+            className="inline-flex items-center gap-2 px-8 rounded-xl font-bold text-base min-h-[56px] cursor-pointer bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
           >
-            <span aria-hidden="true">🔍</span> Find Services
+            <FaSearch aria-hidden="true" />
+            Find Services
           </button>
 
           <button
             type="button"
             onClick={() => navigate("/map")}
             aria-label="View all services on a map"
-            className="inline-flex items-center gap-2 px-8 rounded-xl font-bold text-base min-h-[56px] border-2 border-border dark:border-border-dark text-text-primary dark:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
+            className="inline-flex items-center gap-2 px-8 rounded-xl font-bold text-base min-h-[56px] cursor-pointer border-2 border-border dark:border-border-dark text-text-primary dark:text-text-primary-dark hover:bg-surface dark:hover:bg-surface-dark transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
           >
-            <span aria-hidden="true">🗺️</span> View on Map
+            <FaMap aria-hidden="true" />
+            View on Map
           </button>
         </div>
       </section>
@@ -160,7 +163,7 @@ export default function HomePage() {
         <div className="bg-surface dark:bg-surface-dark p-8 rounded-2xl border border-border dark:border-border-dark">
           <h2
             id="search-heading"
-            className="text-xl font-bold mb-6 text-text-primary dark:text-text-primary-dark"
+            className="text-xl font-bold mb-6 text-text-primary dark:text-text-primary-dark "
           >
             Search for a Service
           </h2>
@@ -225,7 +228,7 @@ export default function HomePage() {
             <button
               type="submit"
               aria-label="Search for services"
-              className="bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) px-10 rounded-lg font-bold min-h-[48px] hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]"
+              className="bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) px-10 rounded-lg font-bold min-h-[48px] hover:brightness-110 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)] cursor-pointer"
             >
               Search
             </button>
@@ -257,7 +260,7 @@ export default function HomePage() {
             type="button"
             onClick={() => navigate("/services")}
             aria-label="View all disability support services"
-            className="text-primary dark:text-primary-dark font-bold hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] rounded-sm"
+            className="text-primary dark:text-primary-dark font-bold hover:underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded-sm cursor-pointer"
           >
             View all services →
           </button>

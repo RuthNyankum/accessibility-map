@@ -50,11 +50,11 @@ export function ServiceSearch({
             disabled={loading}
             className={cn(
               "w-full px-4 py-2 rounded-lg border text-sm min-h-[48px]",
-              "bg-[var(--color-bg)] dark:bg-[var(--color-surface-dark)]",
-              "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
-              "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-              "placeholder:text-[var(--color-text-muted)] dark:placeholder:text-[var(--color-text-muted-dark)]",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]",
+              "bg-(--color-bg) dark:bg-surface-dark",
+              "text-text-primary dark:text-text-primary-dark",
+              "border-border dark:border-border-dark",
+              "placeholder:text-text-muted dark:placeholder:text-text-muted-dark",
+              "focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark",
               "disabled:opacity-50 disabled:cursor-not-allowed",
               "transition-colors duration-200",
             )}
@@ -69,13 +69,14 @@ export function ServiceSearch({
           className={cn(
             "inline-flex items-center justify-center px-6 rounded-lg font-bold text-sm",
             "min-h-[48px] min-w-[100px]",
-            "bg-[var(--color-primary)] text-[var(--color-primary-fg)]",
-            "dark:bg-[var(--color-primary-dark)] dark:text-[var(--color-primary-dark-fg)]",
-            "hover:bg-[var(--color-primary-hover)] dark:hover:opacity-90",
+            "bg-primary text-(--color-primary-fg)",
+            "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
+            "hover:bg-primary-light hover:text-primary",
+            "dark:hover:bg-[#052e16] dark:hover:text-primary-dark",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "transition-colors duration-200",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-            "focus-visible:ring-[var(--color-focus)] dark:focus-visible:ring-[var(--color-focus-dark)]",
+            "focus-visible:ring-focus dark:focus-visible:ring-focus-dark",
           )}
         >
           Search
@@ -88,16 +89,16 @@ export function ServiceSearch({
           disabled={loading || !value}
           aria-label="Clear search and show all services"
           className={cn(
-            "inline-flex items-center justify-center px-6 rounded-lg font-bold text-sm",
+            "inline-flex items-center justify-center px-6 rounded-lg font-bold text-sm cursor-pointer",
             "min-h-[48px] min-w-[90px]",
-            "border border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-            "bg-[var(--color-bg)] dark:bg-[var(--color-surface-dark)]",
-            "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
-            "hover:bg-[var(--color-surface)] dark:hover:bg-[#2d3f5a]",
+            "border border-border dark:border-border-dark",
+            "bg-(--color-bg) dark:bg-surface-dark",
+            "text-text-primary dark:text-text-primary-dark",
+            "hover:bg-surface dark:hover:bg-[#2d3f5a]",
             "disabled:opacity-40 disabled:cursor-not-allowed",
             "transition-colors duration-200",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-            "focus-visible:ring-[var(--color-focus)] dark:focus-visible:ring-[var(--color-focus-dark)]",
+            "focus-visible:ring-focus dark:focus-visible:ring-focus-dark",
           )}
         >
           Clear
@@ -110,7 +111,7 @@ export function ServiceSearch({
           aria-atomic="true"
           className={cn(
             "text-sm ml-auto",
-            "text-[var(--color-text-muted)] dark:text-[var(--color-text-muted-dark)]",
+            "text-text-muted dark:text-text-muted-dark",
           )}
         >
           {loading
@@ -122,10 +123,7 @@ export function ServiceSearch({
       {/* Screen-reader hint linked to the input */}
       <p
         id="services-search-hint"
-        className={cn(
-          "text-xs",
-          "text-[var(--color-text-muted)] dark:text-[var(--color-text-muted-dark)]",
-        )}
+        className={cn("text-xs", "text-text-muted dark:text-text-muted-dark")}
       >
         Type a keyword and press Search, or use the filters on the left to
         narrow results.

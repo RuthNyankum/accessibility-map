@@ -52,7 +52,6 @@ export function ServiceCard({ service, listView = false }) {
           {service.name}
         </h3>
 
-        {/* rest of the component unchanged */}
         <p
           className={cn(
             "flex items-center gap-2 text-sm",
@@ -76,7 +75,7 @@ export function ServiceCard({ service, listView = false }) {
         )}
       </div>
 
-      {/* right column remains the same */}
+      {/* right column */}
       <div
         className={cn("flex flex-col gap-3", listView && "shrink-0 items-end")}
       >
@@ -124,7 +123,7 @@ export function ServiceCard({ service, listView = false }) {
               "text-primary dark:text-primary-dark",
               "hover:underline underline-offset-2 transition-colors duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-              "dark:focus-visible:ring-focus-dark rounded-sm",
+              "dark:focus-visible:ring-focus-dark rounded-sm cursor-pointer",
             )}
           >
             Details <FaArrowRight className="text-xs" aria-hidden="true" />

@@ -307,7 +307,7 @@ export default function AdminUsersPage() {
                   "flex-1 py-3 rounded-xl font-bold text-sm min-h-[44px]",
                   "border border-border dark:border-border-dark",
                   "text-text-primary dark:text-text-primary-dark",
-                  "hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
+                  "hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
                 )}
               >
                 Cancel
@@ -368,123 +368,127 @@ export default function AdminUsersPage() {
           "border-border dark:border-border-dark",
         )}
       >
-        <table className="w-full text-sm" aria-label="All users">
-          <thead>
-            <tr
-              className={cn(
-                "border-b text-left",
-                "bg-surface dark:bg-surface-dark",
-                "border-border dark:border-border-dark",
-              )}
-            >
-              {["User", "Role", "Joined", "Submissions", "Actions"].map((h) => (
-                <th
-                  key={h}
-                  scope="col"
-                  className="px-4 py-3 text-xs font-black uppercase tracking-wider text-text-muted dark:text-text-muted-dark"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((u, i) => (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm" aria-label="All users">
+            <thead>
               <tr
-                key={u._id}
                 className={cn(
-                  "border-b transition-colors duration-150 hover:bg-surface dark:hover:bg-surface-dark",
+                  "border-b text-left",
+                  "bg-surface dark:bg-surface-dark",
                   "border-border dark:border-border-dark",
-                  i === filtered.length - 1 && "border-b-0",
                 )}
               >
-                <td className="px-4 py-3">
-                  <p className="font-bold text-text-primary dark:text-text-primary-dark">
-                    {u.name}
-                  </p>
-                  <p className="text-xs text-text-muted dark:text-text-muted-dark">
-                    {u.email}
-                  </p>
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase",
-                      u.role === "admin"
-                        ? "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-200"
-                        : "bg-surface-2 text-text-secondary dark:bg-surface-dark dark:text-text-secondary-dark",
-                    )}
-                  >
-                    {u.role === "admin" ? (
-                      <FaUserShield
-                        aria-hidden="true"
-                        className="text-[10px]"
-                      />
-                    ) : (
-                      <FaUser aria-hidden="true" className="text-[10px]" />
-                    )}
-                    {u.role}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-text-secondary dark:text-text-secondary-dark">
-                  {new Date(u.createdAt).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-3 text-center font-bold text-text-primary dark:text-text-primary-dark">
-                  {u.submissionsCount ?? 0}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setViewServicesUser(u)}
-                      aria-label={`View ${u.name}'s submissions`}
-                      className={cn(
-                        "w-8 h-8 flex items-center justify-center rounded-lg text-xs border",
-                        "border-border dark:border-border-dark",
-                        "text-primary dark:text-primary-dark",
-                        "hover:bg-surface dark:hover:bg-surface-dark",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-                      )}
+                {["User", "Role", "Joined", "Submissions", "Actions"].map(
+                  (h) => (
+                    <th
+                      key={h}
+                      scope="col"
+                      className="px-4 py-3 text-xs font-black uppercase tracking-wider text-text-muted dark:text-text-muted-dark"
                     >
-                      <FaEye aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => toggleRole(u._id)}
-                      aria-label={
-                        u.role === "admin"
-                          ? `Remove admin from ${u.name}`
-                          : `Make ${u.name} an admin`
-                      }
-                      className={cn(
-                        "w-8 h-8 flex items-center justify-center rounded-lg text-xs border",
-                        "border-border dark:border-border-dark",
-                        "text-text-secondary dark:text-text-secondary-dark",
-                        "hover:bg-surface dark:hover:bg-surface-dark",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-                      )}
-                    >
-                      <FaUserShield aria-hidden="true" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDeleteConfirm(u)}
-                      aria-label={`Delete ${u.name}`}
-                      className={cn(
-                        "w-8 h-8 flex items-center justify-center rounded-lg text-xs",
-                        "text-danger dark:text-danger-dark",
-                        "hover:bg-danger-bg dark:hover:bg-red-950",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-                      )}
-                    >
-                      <FaTrash aria-hidden="true" />
-                    </button>
-                  </div>
-                </td>
+                      {h}
+                    </th>
+                  ),
+                )}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map((u, i) => (
+                <tr
+                  key={u._id}
+                  className={cn(
+                    "border-b transition-colors duration-150 hover:bg-surface dark:hover:bg-surface-dark",
+                    "border-border dark:border-border-dark",
+                    i === filtered.length - 1 && "border-b-0",
+                  )}
+                >
+                  <td className="px-4 py-3">
+                    <p className="font-bold text-text-primary dark:text-text-primary-dark">
+                      {u.name}
+                    </p>
+                    <p className="text-xs text-text-muted dark:text-text-muted-dark">
+                      {u.email}
+                    </p>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase",
+                        u.role === "admin"
+                          ? "bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-200"
+                          : "bg-surface-2 text-text-secondary dark:bg-surface-dark dark:text-text-secondary-dark",
+                      )}
+                    >
+                      {u.role === "admin" ? (
+                        <FaUserShield
+                          aria-hidden="true"
+                          className="text-[10px]"
+                        />
+                      ) : (
+                        <FaUser aria-hidden="true" className="text-[10px]" />
+                      )}
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-text-secondary dark:text-text-secondary-dark">
+                    {new Date(u.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-3 text-center font-bold text-text-primary dark:text-text-primary-dark">
+                    {u.submissionsCount ?? 0}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setViewServicesUser(u)}
+                        aria-label={`View ${u.name}'s submissions`}
+                        className={cn(
+                          "w-8 h-8 flex items-center justify-center rounded-lg text-xs border",
+                          "border-border dark:border-border-dark",
+                          "text-primary dark:text-primary-dark",
+                          "hover:bg-surface dark:hover:bg-surface-dark",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
+                        )}
+                      >
+                        <FaEye aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => toggleRole(u._id)}
+                        aria-label={
+                          u.role === "admin"
+                            ? `Remove admin from ${u.name}`
+                            : `Make ${u.name} an admin`
+                        }
+                        className={cn(
+                          "w-8 h-8 flex items-center justify-center rounded-lg text-xs border",
+                          "border-border dark:border-border-dark",
+                          "text-text-secondary dark:text-text-secondary-dark",
+                          "hover:bg-surface dark:hover:bg-surface-dark",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
+                        )}
+                      >
+                        <FaUserShield aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteConfirm(u)}
+                        aria-label={`Delete ${u.name}`}
+                        className={cn(
+                          "w-8 h-8 flex items-center justify-center rounded-lg text-xs",
+                          "text-danger dark:text-danger-dark",
+                          "hover:bg-danger-bg dark:hover:bg-red-950",
+                          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
+                        )}
+                      >
+                        <FaTrash aria-hidden="true" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

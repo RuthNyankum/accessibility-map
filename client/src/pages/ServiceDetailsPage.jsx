@@ -327,7 +327,7 @@ export default function ServiceDetailsPage() {
                   href={`https://www.google.com/maps/dir/?api=1&destination=${service.coordinates.lat},${service.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 rounded-xl font-bold text-sm min-h-13 bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) hover:bg-primary-hover transition-colors"
+                  className="inline-flex items-center gap-2 px-5 rounded-xl font-bold text-sm min-h-13 bg-primary text-(--color-primary-fg) dark:bg-primary-dark dark:text-(--color-primary-dark-fg) hover:bg-primary-hover hover:text-white transition-colors"
                 >
                   <FaMap aria-hidden="true" />
                   Get Directions
@@ -335,7 +335,12 @@ export default function ServiceDetailsPage() {
               )}
               <a
                 href={`tel:${service.phone.replace(/\s/g, "")}`}
-                className="inline-flex items-center gap-2 px-5 rounded-xl font-bold text-sm min-h-[52px] border-2 border-text-primary dark:border-text-primary-dark text-text-primary dark:text-text-primary-dark hover:bg-surface transition-colors"
+                className="inline-flex items-center gap-2 px-5 rounded-xl font-bold text-sm min-h-[52px]
+  border-2 border-text-primary dark:border-text-primary-dark
+  text-text-primary dark:text-text-primary-dark
+  hover:bg-text-primary hover:text-white
+  dark:hover:bg-text-primary-dark dark:hover:text-black
+  transition-colors"
               >
                 <FaPhone aria-hidden="true" />
                 Call Now
@@ -347,6 +352,7 @@ export default function ServiceDetailsPage() {
                     text: `Check out ${service.name} on AbilityMap Ghana`,
                     url: window.location.href,
                   };
+
                   if (navigator.share) {
                     try {
                       await navigator.share(shareData);
@@ -362,7 +368,13 @@ export default function ServiceDetailsPage() {
                     }
                   }
                 }}
-                className="inline-flex items-center gap-2 px-5 rounded-xl font-bold text-sm min-h-[52px] border-2 border-border dark:border-border-dark bg-(--color-bg) dark:bg-surface-dark text-text-primary dark:text-text-primary-dark hover:bg-surface transition-colors"
+                className="inline-flex items-center gap-2 px-5 rounded-xl font-bold text-sm min-h-[52px]
+  border-2 border-border dark:border-border-dark
+  bg-(--color-bg) dark:bg-surface-dark
+  text-text-primary dark:text-text-primary-dark
+  hover:bg-text-primary hover:text-white
+  dark:hover:bg-text-primary-dark dark:hover:text-black
+  transition-colors"
               >
                 <FaShareAlt aria-hidden="true" />
                 Share

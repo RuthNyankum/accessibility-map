@@ -4,6 +4,7 @@ import { MapSidebar } from "../components/map/MapSidebar";
 import { MapView } from "../components/map/MapView";
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────
+// Filter options for disability types (used in sidebar dropdown + filtering)
 const TYPE_OPTIONS = [
   "All types",
   "Physical",
@@ -20,10 +21,9 @@ const API_BASE = import.meta.env.VITE_API_URL;
 /**
  * normaliseService
  *
- * Your schema already uses `badge`, `badgeColor`, `location`, `phone`,
- * `email`, `website`, `hours`, `description` — so almost no remapping needed.
- * The only difference is coordinates: your schema stores { lat, lng } nested
- * under `coordinates`, so we pull those out to the top level for MapView.
+ * Converts backend service format into a map-friendly format.
+ * - Extracts coordinates from nested structure
+ * - Ensures safe fallback values
  */
 function normaliseService(raw) {
   return {
@@ -63,7 +63,7 @@ function LoadingSkeleton() {
           }}
           aria-hidden="true"
         />
-        <p className="text-sm font-bold text-[var(--color-text-muted)] dark:text-[var(--color-text-muted-dark)]">
+        <p className="text-sm font-bold text-text-muted dark:text-text-muted-dark">
           Loading services…
         </p>
       </div>
@@ -82,18 +82,17 @@ function ErrorBanner({ message, onRetry }) {
       <span aria-hidden="true" className="text-4xl">
         ⚠️
       </span>
-      <p className="font-bold text-[var(--color-danger)] dark:text-[var(--color-danger-dark)]">
-        {message}
-      </p>
+      <p className="font-bold text-danger dark:text-danger-dark">{message}</p>
+
       <button
         type="button"
         onClick={onRetry}
         className={cn(
           "px-6 py-2.5 rounded-xl font-bold text-sm min-h-[44px]",
-          "bg-[var(--color-primary)] text-[var(--color-primary-fg)]",
-          "dark:bg-[var(--color-primary-dark)] dark:text-[var(--color-primary-dark-fg)]",
-          "hover:bg-[var(--color-primary-hover)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]",
+          "bg-primary text-(--color-primary-fg)",
+          "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
+          "hover:bg-primary-hover",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
           "transition-colors duration-200",
         )}
         aria-label="Retry loading services"
@@ -106,81 +105,50 @@ function ErrorBanner({ message, onRetry }) {
 
 // ── MAP PAGE ───────────────────────────────────────────────────────────────
 export default function MapPage() {
-  // ── State ──
+  // ── STATE ──────────────────────────────────────────────────────────────
   const [allServices, setAllServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All types");
   const [selectedId, setSelectedId] = useState(null);
 
-  // ── Fetch ALL approved services (loop through pages) ───────────────────
-  // The API paginates (default limit=8). For the map we want every pin,
-  // so we fetch page by page until we have them all.
+  /**
+   * Mobile accessibility state:
+   * controls whether user is viewing list OR map on small screens
+   */
+  const [viewMode, setViewMode] = useState("list"); // "list" | "map"
+
+  // ── FETCH SERVICES ─────────────────────────────────────────────────────
   const fetchServices = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const token = localStorage.getItem("token");
       const headers = {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      // ── First request — get total so we know how many pages to fetch ──
-      const firstRes = await fetch(`${API_BASE}/services?page=1&limit=100`, {
+      const res = await fetch(`${API_BASE}/services?page=1&limit=100`, {
         headers,
       });
 
-      if (!firstRes.ok) {
-        throw new Error(
-          `Failed to load services (${firstRes.status} ${firstRes.statusText})`,
-        );
+      if (!res.ok) {
+        throw new Error("Failed to load services");
       }
 
-      const firstJson = await firstRes.json();
-      // Your API returns: { services: [...], total, page, totalPages }
-      const { services: firstBatch, totalPages } = firstJson;
+      const json = await res.json();
+      const all = json.services ?? [];
 
-      let all = [...firstBatch];
-
-      // ── Fetch remaining pages in parallel if needed ────────────────────
-      if (totalPages > 1) {
-        const pageNumbers = Array.from(
-          { length: totalPages - 1 },
-          (_, i) => i + 2,
-        );
-
-        const rest = await Promise.all(
-          pageNumbers.map((p) =>
-            fetch(`${API_BASE}/services?page=${p}&limit=100`, { headers })
-              .then((r) => r.json())
-              .then((j) => j.services ?? []),
-          ),
-        );
-
-        all = all.concat(rest.flat());
-      }
-
-      // ── Drop services with no coordinates — can't place them on map ───
+      // Remove services without coordinates (cannot render on map)
       const withCoords = all.filter(
-        (s) => s.coordinates?.lat != null && s.coordinates?.lng != null,
+        (s) => s.coordinates?.lat && s.coordinates?.lng,
       );
-
-      if (withCoords.length < all.length) {
-        console.warn(
-          `[MapPage] ${all.length - withCoords.length} service(s) skipped — missing coordinates.`,
-        );
-      }
 
       setAllServices(withCoords.map(normaliseService));
     } catch (err) {
-      console.error("[MapPage] fetch error:", err);
-      setError(
-        err.message ||
-          "Could not load services. Please check your connection and try again.",
-      );
+      setError(err.message || "Error loading services");
     } finally {
       setLoading(false);
     }
@@ -192,101 +160,109 @@ export default function MapPage() {
     fetchServices();
   }, [fetchServices]);
 
-  // ── Client-side filtering ──────────────────────────────────────────────
-  // Search hits name, location, address, and badge
+  // ── FILTERING ─────────────────────────────────────────────────────────
   const filtered = allServices.filter((s) => {
     const q = search.toLowerCase();
+
     const matchSearch =
       !search ||
       s.name.toLowerCase().includes(q) ||
       s.location.toLowerCase().includes(q) ||
       s.address.toLowerCase().includes(q) ||
       s.badge.toLowerCase().includes(q);
+
     const matchType = typeFilter === "All types" || s.badge === typeFilter;
+
     return matchSearch && matchType;
   });
 
-  // Clear selection if filtered out
-  useEffect(() => {
-    if (selectedId && !filtered.find((s) => s.id === selectedId)) {
-      setSelectedId(null);
-    }
-  }, [search, typeFilter]);
-
-  // ── Pin / sidebar selection ────────────────────────────────────────────
-  const handleSelect = (id) => {
-    setSelectedId(id);
-    if (id) {
-      setTimeout(() => {
-        document
-          .getElementById(`map-sidebar-${id}`)
-          ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      }, 50);
-    }
-  };
-
-  // ── Render ─────────────────────────────────────────────────────────────
   return (
     <div
-      className={cn(
-        "flex flex-col",
-        "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
-        "transition-colors duration-300",
-      )}
+      className={cn("flex flex-col", "bg-(--color-bg) dark:bg-bg-dark")}
       style={{ height: "calc(100vh - 116px)" }}
     >
-      {/* Page header */}
-      <header
-        className={cn(
-          "px-6 pt-5 pb-4 shrink-0 border-b",
-          "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-        )}
-      >
-        <h1
-          className={cn(
-            "text-xl font-black",
-            "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
-          )}
-        >
+      {/* ── HEADER ───────────────────────────────────────────────────── */}
+      <header className="px-6 pt-5 pb-3 border-b border-border dark:border-border-dark">
+        <h1 className="text-xl font-black text-text-primary dark:text-text-primary-dark">
           Service Map
         </h1>
-        <p
-          className={cn(
-            "text-sm mt-0.5",
-            "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
-          )}
-        >
-          {loading
-            ? "Loading services…"
-            : error
-              ? "Could not load services"
-              : `${allServices.length} service${allServices.length !== 1 ? "s" : ""} across Ghana`}
-        </p>
+
+        {/* Mobile view toggle (accessibility improvement) */}
+        <div className="flex gap-2 mt-3 md:hidden">
+          <button
+            onClick={() => setViewMode("list")}
+            className={cn(
+              "flex-1 py-2 rounded-lg font-bold text-sm",
+              viewMode === "list"
+                ? "bg-primary text-white"
+                : "bg-surface dark:bg-surface-dark",
+            )}
+            aria-pressed={viewMode === "list"}
+          >
+            List
+          </button>
+
+          <button
+            onClick={() => setViewMode("map")}
+            className={cn(
+              "flex-1 py-2 rounded-lg font-bold text-sm",
+              viewMode === "map"
+                ? "bg-primary text-white"
+                : "bg-surface dark:bg-surface-dark",
+            )}
+            aria-pressed={viewMode === "map"}
+          >
+            Map
+          </button>
+        </div>
       </header>
 
-      {/* Body */}
+      {/* ── BODY ─────────────────────────────────────────────────────── */}
       {loading ? (
         <LoadingSkeleton />
       ) : error ? (
         <ErrorBanner message={error} onRetry={fetchServices} />
       ) : (
         <div className="flex flex-1 min-h-0">
-          <MapSidebar
-            search={search}
-            onSearchChange={setSearch}
-            typeFilter={typeFilter}
-            onTypeChange={setTypeFilter}
-            typeOptions={TYPE_OPTIONS}
-            services={filtered}
-            selectedId={selectedId}
-            onSelect={handleSelect}
-          />
+          {/* ── DESKTOP SIDEBAR (unchanged UX) ─────────────────────── */}
+          <div className="hidden md:flex">
+            <MapSidebar
+              search={search}
+              onSearchChange={setSearch}
+              typeFilter={typeFilter}
+              onTypeChange={setTypeFilter}
+              services={filtered}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+            />
+          </div>
 
-          <div className="flex-1 min-w-0 relative">
+          {/* ── MOBILE LIST VIEW ───────────────────────────────────── */}
+          {viewMode === "list" && (
+            <div className="md:hidden flex-1 overflow-auto">
+              <MapSidebar
+                search={search}
+                onSearchChange={setSearch}
+                typeFilter={typeFilter}
+                onTypeChange={setTypeFilter}
+                services={filtered}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
+            </div>
+          )}
+
+          {/* ── MAP VIEW ───────────────────────────────────────────── */}
+          <div
+            className={cn(
+              "flex-1 min-w-0",
+              viewMode === "list" ? "hidden md:block" : "block",
+            )}
+          >
             <MapView
               services={filtered}
               selectedId={selectedId}
-              onPinClick={handleSelect}
+              onPinClick={setSelectedId}
             />
           </div>
         </div>

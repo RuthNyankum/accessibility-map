@@ -292,7 +292,6 @@ function NavButtons({
   loading = false,
   showBack = true,
 }) {
-  const newLocal = "hover:bg-primary-hover dark:hover:opacity-90";
   return (
     <div className="flex gap-4 mt-8">
       {showBack && (
@@ -318,9 +317,9 @@ function NavButtons({
         disabled={loading}
         className={cn(
           "px-8 py-3 rounded-xl font-bold text-sm min-h-[52px]",
+          "bg-primary text-(--color-primary-fg)",
           "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
-          "hover:bg-primary-hover hover:text-white dark:hover:opacity-90 dark:hover:text-white",
-          newLocal,
+          "hover:bg-primary-hover dark:hover:opacity-90 dark:hover:text-white",
           "disabled:opacity-50 disabled:cursor-not-allowed",
           "transition-colors duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]",
@@ -968,15 +967,30 @@ function Step3({ data, onChange, errors }) {
 
 // ─── Step 4: Review & Submit ──────────────────────────────────────────────────
 
-function ReviewRow({ label, value }) {
+function ReviewRow({ label, value, isLink = false }) {
   if (!value) return null;
   return (
-    <div>
+    <div className="min-w-0">
       <dt className="text-[10px] font-black uppercase tracking-wider text-text-muted dark:text-text-muted-dark mb-0.5">
         {label}
       </dt>
-      <dd className="text-sm font-bold text-text-primary dark:text-text-primary-dark">
-        {value}
+      <dd className="text-sm font-bold text-text-primary dark:text-text-primary-dark break-all">
+        {isLink ? (
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "underline underline-offset-2",
+              "text-primary dark:text-primary-dark",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded-sm",
+            )}
+          >
+            {value}
+          </a>
+        ) : (
+          value
+        )}
       </dd>
     </div>
   );
@@ -1009,7 +1023,7 @@ function ReviewSection({ title, onEdit, children }) {
           Edit
         </button>
       </div>
-      <dl className="grid grid-cols-2 gap-x-8 gap-y-4">{children}</dl>
+      <dl className="grid grid-cols-2 gap-x-8 gap-y-4 min-w-0">{children}</dl>
     </div>
   );
 }
@@ -1069,7 +1083,7 @@ function Step4({ data, onEdit, errors, serverError, loading, onSubmit }) {
       <ReviewSection title="Service Details" onEdit={() => onEdit(2)}>
         <ReviewRow label="Phone" value={data.step2.phone} />
         <ReviewRow label="Email" value={data.step2.email} />
-        <ReviewRow label="Website" value={data.step2.website} />
+        <ReviewRow label="Website" value={data.step2.website} isLink />
         <ReviewRow label="Opening Hours" value={data.step2.hours || "—"} />
         {data.step2.description && (
           <div className="col-span-2">

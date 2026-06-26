@@ -43,6 +43,7 @@ export function CardReadButton({ text, cardId, className }) {
       className={cn(
         "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-bold",
         "min-h-[36px] min-w-[36px]",
+        "cursor-pointer",
         "transition-colors duration-200",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
         "focus-visible:ring-focus dark:focus-visible:ring-focus-dark",
@@ -64,7 +65,7 @@ export function CardReadButton({ text, cardId, className }) {
         className,
       )}
     >
-      <span aria-hidden="true" className="text-[14px] flex items-center">
+      <span aria-hidden="true" className="text-[14px] flex items-center ">
         {isThisActive ? (
           <FaStop className="text-red-500 dark:text-red-400" />
         ) : (

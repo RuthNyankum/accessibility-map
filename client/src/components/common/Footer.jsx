@@ -49,7 +49,7 @@ const SUPPORT_LINKS = [
     label: "Screen Reader Guide",
   },
   { to: "/keyboard-nav", icon: FaKeyboard, label: "Keyboard Navigation" },
-  { to: "/contact", icon: FaPhoneAlt, label: "Contact Us" },
+  { to: "/contact-us", icon: FaPhoneAlt, label: "Contact Us" },
   { to: "/report", icon: FaBug, label: "Report an Issue" },
 ];
 
@@ -65,7 +65,7 @@ const SERVICE_TYPES = [
 const LEGAL_LINKS = [
   { to: "/privacy", label: "Privacy Policy" },
   { to: "/terms", label: "Terms of Use" },
-  { to: "/contact", label: "Contact" },
+  { to: "/contact-us", label: "Contact" },
   { to: "/accessibility-statement", label: "Accessibility Statement" },
 ];
 

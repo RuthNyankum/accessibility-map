@@ -20,6 +20,10 @@ import AdminPendingPage from "../pages/admin/AdminPendingPage";
 import AdminServicesPage from "../pages/admin/AdminServicesPage";
 import AdminUsersPage from "../pages/admin/AdminUsersPage";
 import AboutPage from "../pages/AboutPage";
+import TermsOfUsePage from "../pages/TermsOfUsePage";
+import PrivacyPolicyPage from "../pages/PrivacyPolicyPage";
+import AccessibilityStatementPage from "../pages/AccessibilityStatementPage";
+import ContactPage from "../pages/ContactPage";
 
 export default function AppRoute() {
   return (
@@ -31,6 +35,13 @@ export default function AppRoute() {
         <Route path="/services/:id" element={<ServiceDetailsPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/map" element={<MapPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsOfUsePage />} />
+        <Route
+          path="/accessibility-statement"
+          element={<AccessibilityStatementPage />}
+        />
+        <Route path="/contact-us" element={<ContactPage />} />
 
         {/* Protected routes (require login) */}
         <Route element={<ProtectedRoute />}>

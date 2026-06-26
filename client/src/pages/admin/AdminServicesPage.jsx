@@ -330,7 +330,7 @@ export default function AdminServicesPage() {
                   "flex-1 py-3 rounded-xl font-bold text-sm min-h-[44px]",
                   "border border-border dark:border-border-dark",
                   "text-text-primary dark:text-text-primary-dark",
-                  "hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
+                  "hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
                 )}
               >
                 Cancel

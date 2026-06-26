@@ -81,7 +81,7 @@ export function MapMarkerPopup({ service, onClose, style, flipDown = false }) {
           "w-full py-2 rounded-lg text-xs font-bold min-h-[36px]",
           "bg-primary text-(--color-primary-fg)",
           "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
-          "hover:bg-primary-hover dark:hover:opacity-90",
+          "hover:bg-primary-hover dark:hover:opacity-90 dark:hover:text-white",
           "transition-colors duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
         )}

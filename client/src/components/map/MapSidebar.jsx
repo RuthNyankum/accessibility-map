@@ -25,13 +25,13 @@ function MapSidebarCard({ service, isSelected, onClick }) {
       aria-pressed={isSelected}
       className={cn(
         "w-full text-left flex flex-col gap-2 px-4 py-4 border-b",
-        "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+        "border-border dark:border-border-dark",
         "transition-colors duration-150",
         isSelected
-          ? "bg-[var(--color-primary-light)] dark:bg-[#052e16]"
+          ? "bg-primary-light dark:bg-[#052e16]"
           : [
-              "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
-              "hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-surface-dark)]",
+              "bg-(--color-bg) dark:bg-bg-dark",
+              "hover:bg-surface dark:hover:bg-surface-dark",
             ],
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-focus)]",
       )}
@@ -41,7 +41,7 @@ function MapSidebarCard({ service, isSelected, onClick }) {
       <p
         className={cn(
           "font-bold text-base leading-snug",
-          "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
+          "text-text-primary dark:text-text-primary-dark",
         )}
       >
         {service.name}
@@ -50,7 +50,7 @@ function MapSidebarCard({ service, isSelected, onClick }) {
       <p
         className={cn(
           "flex items-center gap-1.5 text-xs",
-          "text-[var(--color-text-secondary)] dark:text-[var(--color-text-secondary-dark)]",
+          "text-text-secondary dark:text-text-secondary-dark",
         )}
       >
         <span aria-hidden="true">📍</span>
@@ -89,8 +89,8 @@ export function MapSidebar({
       aria-label="Service filters and list"
       className={cn(
         "w-64 shrink-0 flex flex-col border-r overflow-hidden",
-        "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-        "bg-[var(--color-bg)] dark:bg-[var(--color-bg-dark)]",
+        "border-border dark:border-border-dark",
+        "bg-(--color-bg) dark:bg-bg-dark",
         "transition-colors duration-300",
       )}
     >
@@ -98,7 +98,7 @@ export function MapSidebar({
       <div
         className={cn(
           "px-4 py-4 border-b shrink-0 flex flex-col gap-3",
-          "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+          "border-border dark:border-border-dark",
         )}
       >
         {/* Search */}
@@ -114,11 +114,11 @@ export function MapSidebar({
             onChange={(e) => onSearchChange(e.target.value)}
             className={cn(
               "w-full px-4 py-2.5 rounded-xl border text-sm min-h-[44px]",
-              "bg-[var(--color-bg)] dark:bg-[var(--color-surface-dark)]",
-              "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
-              "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-              "placeholder:text-[var(--color-text-muted)] dark:placeholder:text-[var(--color-text-muted-dark)]",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]",
+              "bg-(--color-bg) dark:bg-surface-dark",
+              "text-text-primary dark:text-text-primary-dark",
+              "border-border dark:border-border-dark",
+              "placeholder:text-text-muted dark:placeholder:text-text-muted-dark",
+              "focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark",
               "transition-colors duration-200",
             )}
           />
@@ -135,10 +135,10 @@ export function MapSidebar({
             onChange={(e) => onTypeChange(e.target.value)}
             className={cn(
               "w-full px-4 py-2.5 rounded-xl border text-sm min-h-[44px] cursor-pointer",
-              "bg-[var(--color-bg)] dark:bg-[var(--color-surface-dark)]",
-              "text-[var(--color-text-primary)] dark:text-[var(--color-text-primary-dark)]",
-              "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] dark:focus:ring-[var(--color-primary-dark)]",
+              "bg-(--color-bg) dark:bg-surface-dark",
+              "text-text-primary dark:text-text-primary-dark",
+              "border-border dark:border-border-dark",
+              "focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark",
               "transition-colors duration-200",
             )}
           >
@@ -157,7 +157,7 @@ export function MapSidebar({
           aria-atomic="true"
           className={cn(
             "text-xs font-bold text-center",
-            "text-[var(--color-text-muted)] dark:text-[var(--color-text-muted-dark)]",
+            "text-text-muted dark:text-text-muted-dark",
           )}
         >
           {services.length} {services.length === 1 ? "service" : "services"}{" "}
@@ -175,7 +175,7 @@ export function MapSidebar({
             <span aria-hidden="true" className="text-2xl">
               🔍
             </span>
-            <p className="text-xs text-center text-[var(--color-text-muted)] dark:text-[var(--color-text-muted-dark)]">
+            <p className="text-xs text-center text-text-muted dark:text-text-muted-dark">
               No services match your filters
             </p>
           </div>
@@ -205,7 +205,7 @@ export function MapSidebar({
         <div
           className={cn(
             "px-4 py-3 border-t shrink-0",
-            "border-[var(--color-border)] dark:border-[var(--color-border-dark)]",
+            "border-border dark:border-border-dark",
           )}
         >
           <button
@@ -214,9 +214,9 @@ export function MapSidebar({
             aria-label={`View full details for ${selectedService.name}`}
             className={cn(
               "w-full py-2.5 rounded-xl font-bold text-sm min-h-[44px]",
-              "bg-[var(--color-primary)] text-[var(--color-primary-fg)]",
-              "dark:bg-[var(--color-primary-dark)] dark:text-[var(--color-primary-dark-fg)]",
-              "hover:bg-[var(--color-primary-hover)] dark:hover:opacity-90",
+              "bg-primary text-(--color-primary-fg)",
+              "dark:bg-primary-dark dark:text-(--color-primary-dark-fg)",
+              "hover:bg-primary-hover dark:hover:opacity-90 dark:hover:text-white",
               "transition-colors duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--color-focus)]",
             )}
