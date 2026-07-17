@@ -239,6 +239,11 @@ export default function AdminServicesPage() {
       const service = services.find((s) => s._id === id);
       if (!service) return;
 
+      if (service.status === "rejected") {
+        showToast("Rejected services can't be featured");
+        return;
+      }
+
       const newFeatured = !service.featured;
 
       const res = await API.patch(`/services/${id}/feature`, {
@@ -488,13 +493,20 @@ export default function AdminServicesPage() {
                       <button
                         type="button"
                         onClick={() => toggleFeatured(s._id)}
+                        disabled={s.status === "rejected"}
                         aria-label={
-                          s.featured
-                            ? `Remove ${s.name} from featured`
-                            : `Feature ${s.name}`
+                          s.status === "rejected"
+                            ? `${s.name} is rejected and cannot be featured`
+                            : s.featured
+                              ? `Remove ${s.name} from featured`
+                              : `Feature ${s.name}`
                         }
                         aria-pressed={s.featured}
-                        className="text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded"
+                        className={cn(
+                          "text-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus rounded",
+                          s.status === "rejected" &&
+                            "opacity-40 cursor-not-allowed",
+                        )}
                       >
                         {s.featured ? (
                           <FaStar
